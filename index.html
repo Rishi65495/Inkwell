@@ -459,8 +459,18 @@
 
 <script>
 // ── STORAGE ──────────────────────────────────────────────
-async function put(k,v){try{await window.storage.set(k,JSON.stringify(v));}catch(e){}}
-async function get(k){try{const r=await window.storage.get(k);return r?JSON.parse(r.value):null;}catch(e){return null;}}
+async function put(k, v) {
+  try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+}
+
+async function get(k) {
+  try {
+    const r = localStorage.getItem(k);
+    return r ? JSON.parse(r) : null;
+  } catch (e) {
+    return null;
+  }
+}
 
 // ── STATE ─────────────────────────────────────────────────
 let USER=null, ARTS=[], CMTS={}, PIN='123456', DRAFTS={};
@@ -533,7 +543,7 @@ function applyUser(){
 }
 async function logout(){
   USER=null;
-  try{await window.storage.delete('iw_user');}catch(e){}
+ try { localStorage.removeItem('iw_user'); } catch(e){}
   document.getElementById('nav-auth').style.display='inline-flex';
   document.getElementById('nav-user').style.display='none';
   showView('home');
@@ -612,27 +622,40 @@ function applyTpl(t){
 }
 
 // ── SUBMIT ────────────────────────────────────────────────
-async function submitArticle(){
-  if(!USER){openLogin();return;}
+async function submitArticle() {
+  if (!USER) {
+    openLogin();
+    return;
+  }
 
-  const title=(document.getElementById('w-title').value||'').trim();
-  const html=document.getElementById('editor').innerHTML.trim();
-  const cat=document.getElementById('w-cat').value;
-  const seoT=(document.getElementById('w-seo-t').value||'').trim();
-  const seoD=(document.getElementById('w-seo-d').value||'').trim();
+  const title = (document.getElementById('w-title').value || '').trim();
+  const html = document.getElementById('editor').innerHTML.trim();
+  const cat = document.getElementById('w-cat').value;
+  const seoT = (document.getElementById('w-seo-t').value || '').trim();
+  const seoD = (document.getElementById('w-seo-d').value || '').trim();
 
-  if(!title){toast('Add a title first.');return;}
-  if(!cat){toast('Select a category.');return;}
-  if((document.getElementById('editor').innerText||'').trim().length<20){toast('Article is too short.');return;}
+  if (!title) { toast('Add a title first.'); return; }
+  if (!cat) { toast('Select a category.'); return; }
+  if ((document.getElementById('editor').innerText || '').trim().length < 20) {
+    toast('Article is too short.');
+    return;
+  }
 
-  const wc=wordCount();
-  if(wc>1000){toast(`Over limit — ${wc}/1000 words.`);return;}
+  const wc = wordCount();
+  if (wc > 1000) {
+    toast(`Over limit — ${wc}/1000 words.`);
+    return;
+  }
 
-  const coverEl=document.getElementById('cover-prev');
-  const cover=coverEl.style.display!=='none'?coverEl.src:null;
+  const coverEl = document.getElementById('cover-prev');
+  const cover = coverEl.style.display !== 'none' ? coverEl.src : null;
+
+  const excerpt = (document.getElementById('editor').innerText || '')
+    .trim()
+    .slice(0, 190) + '…';
 
   try {
-    const res = await fetch("http://localhost:3000/api/articles", {
+    const res = await fetch("/api/articles", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -640,37 +663,70 @@ async function submitArticle(){
       body: JSON.stringify({
         title,
         content: html,
+        excerpt,
         category: cat,
         seoTitle: seoT,
         seoDesc: seoD,
         coverImage: cover,
         authorName: USER.name,
-        authorEmail: USER.email
+        authorEmail: USER.email,
+        readTime: Math.max(1, Math.ceil(wc / 200))
       })
     });
 
     const data = await res.json();
 
-    if(res.ok){
-      toast("✅ Article submitted to server!");
-
-      document.getElementById('w-title').value='';
-      document.getElementById('editor').innerHTML='';
-      document.getElementById('cover-prev').style.display='none';
-
-      showView('home');
-
-    } else {
-      toast("❌ Failed to save article");
+    if (!res.ok) {
       console.error(data);
+      toast("❌ Failed to save article");
+      return;
     }
 
-  } catch(err){
+    // ✅ update frontend instantly
+    const saved = {
+      id: data.id || ('a_' + Date.now()),
+      title,
+      content: html,
+      excerpt,
+      category: cat,
+      author: {
+        name: USER.name,
+        email: USER.email,
+        initials: USER.initials
+      },
+      status: 'pending',
+      createdAt: Date.now(),
+      publishedAt: null,
+      coverImage: cover,
+      readTime: Math.max(1, Math.ceil(wc / 200)),
+      seoTitle: seoT || title,
+      seoDesc: seoD || excerpt,
+      isAdmin: false
+    };
+
+    ARTS.unshift(saved);
+    await put('iw_arts', ARTS);
+
+    // clear draft
+    if (DRAFTS[USER.email]) {
+      delete DRAFTS[USER.email];
+      await put('iw_drafts', DRAFTS);
+    }
+
+    // reset UI
+    document.getElementById('w-title').value = '';
+    document.getElementById('editor').innerHTML = '';
+    document.getElementById('cover-prev').style.display = 'none';
+
+    toast('✅ Submitted for review!');
+    showView('home');
+    renderArticles();
+
+  } catch (err) {
     console.error(err);
-    toast("⚠️ Backend not running (start npm run dev)");
+    toast("⚠️ Backend not running");
   }
 }
-
 async function saveDraft(){
   if(!USER)return;
   DRAFTS[USER.email]={title:document.getElementById('w-title').value,content:document.getElementById('editor').innerHTML,cat:document.getElementById('w-cat').value,st:document.getElementById('w-seo-t').value,sd:document.getElementById('w-seo-d').value};
