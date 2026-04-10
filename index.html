@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inkwell — Where Words Find Home</title>
+  <meta name="description" content="A beautiful writing platform for thinkers, storytellers, and creators. Read and write articles that matter.">
+  <meta name="keywords" content="articles, writing, blog, stories, opinion, literature, technology, culture">
+  <meta property="og:title" content="Inkwell — Where Words Find Home">
+  <meta property="og:description" content="Read and write thoughtful articles on topics that matter.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://inkwell.app">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --cream: #FAF7F2;
+      --cream-dark: #F0EAE0;
+      --ink: #1A1208;
+      --ink-light: #3D3525;
+      --ink-muted: #8A7D6D;
+      --amber: #C4783A;
+      --amber-light: #E8A96A;
+      --amber-pale: #FDF3E7;
+      --terracotta: #B85C38;
+      --sage: #6B8F71;
+      --border: #DDD4C5;
+      --white: #FFFFFF;
+      --error: #C0392B;
+      --success: #27AE60;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-article: 'Lora', Georgia, serif;
+      --shadow-sm: 0 1px 3px rgba(26,18,8,0.07);
+      --shadow-md: 0 4px 16px rgba(26,18,8,0.10);
+      --shadow-lg: 0 12px 40px rgba(26,18,8,0.14);
+      --radius: 8px; --radius-lg: 16px;
+      --t: 0.2s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--cream); color: var(--ink); line-height: 1.6; min-height: 100vh; }
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: var(--cream-dark); } ::-webkit-scrollbar-thumb { background: var(--amber-light); border-radius: 3px; }
+    button { font-family: var(--font-body); }
+
+    /* ─── NAV ─── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(250,247,242,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); height: 62px; padding: 0 28px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-brand { font-family: var(--font-display); font-size: 1.45rem; font-weight: 700; cursor: pointer; letter-spacing: -0.3px; color: var(--ink); }
+    .nav-brand span { color: var(--amber); }
+    .nav-right { display: flex; align-items: center; gap: 6px; }
+    .nbtn { padding: 7px 18px; border-radius: 40px; border: none; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: var(--t); }
+    .nbtn-ghost { background: transparent; color: var(--ink-light); } .nbtn-ghost:hover { background: var(--cream-dark); }
+    .nbtn-dark { background: var(--ink); color: #fff; } .nbtn-dark:hover { background: var(--ink-light); }
+    .nbtn-amber { background: var(--amber); color: #fff; } .nbtn-amber:hover { background: var(--terracotta); }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--amber); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; cursor: pointer; border: 2px solid var(--border); user-select: none; }
+    .user-menu { position: relative; }
+    .user-drop { position: absolute; top: 42px; right: 0; background: white; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg); min-width: 190px; padding: 6px 0; display: none; z-index: 200; }
+    .user-menu:hover .user-drop { display: block; }
+    .drop-item { padding: 9px 15px; font-size: 0.85rem; color: var(--ink-light); cursor: pointer; transition: var(--t); display: flex; align-items: center; gap: 8px; }
+    .drop-item:hover { background: var(--cream); }
+    .drop-div { height: 1px; background: var(--border); margin: 4px 0; }
+
+    /* ─── VIEWS ─── */
+    .view { display: none; } .view.active { display: block; }
+    #view-write.active { display: flex; }
+
+    /* ─── HOME ─── */
+    .hero { background: var(--ink); padding: 72px 28px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23C4783A' fill-opacity='0.07' d='M26 26v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM26 6V2h-2v4h-4v2h4v4h2V8h4V6h-4zM6 26v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 6V2H4v4H0v2h4v4h2V8h4V6H6z'/%3E%3C/svg%3E"); pointer-events: none; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(2.2rem, 5.5vw, 3.8rem); font-weight: 700; color: #fff; line-height: 1.18; margin-bottom: 14px; position: relative; }
+    .hero-title em { color: var(--amber-light); font-style: italic; }
+    .hero-sub { font-size: 1.05rem; color: rgba(255,255,255,0.65); max-width: 460px; margin: 0 auto 30px; position: relative; }
+    .hero-btns { display: inline-flex; gap: 10px; position: relative; }
+    .btn-hero-p { padding: 11px 26px; background: var(--amber); color: #fff; border: none; border-radius: 40px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: var(--t); }
+    .btn-hero-p:hover { background: var(--amber-light); transform: translateY(-1px); }
+    .btn-hero-s { padding: 11px 26px; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.3); border-radius: 40px; font-size: 0.9rem; cursor: pointer; transition: var(--t); }
+    .btn-hero-s:hover { background: rgba(255,255,255,0.08); }
+
+    .home-body { max-width: 1180px; margin: 0 auto; padding: 44px 28px; }
+    .search-row { margin-bottom: 22px; }
+    .search-inp { width: 100%; max-width: 420px; padding: 10px 18px; border: 1px solid var(--border); border-radius: 40px; font-family: var(--font-body); font-size: 0.875rem; background: white; outline: none; transition: var(--t); }
+    .search-inp:focus { border-color: var(--amber); }
+    .cat-bar { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 36px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+    .cat-btn { padding: 5px 16px; border-radius: 40px; border: 1px solid var(--border); background: white; color: var(--ink-muted); font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: var(--t); }
+    .cat-btn:hover, .cat-btn.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(305px, 1fr)); gap: 24px; }
+    .card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: var(--t); display: flex; flex-direction: column; }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .card-cover { height: 170px; background: var(--cream-dark); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+    .card-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+    .card-cat { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--amber); margin-bottom: 7px; }
+    .card-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; line-height: 1.38; margin-bottom: 7px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-excerpt { font-size: 0.855rem; color: var(--ink-muted); line-height: 1.55; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 14px; }
+    .card-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 11px; border-top: 1px solid var(--cream-dark); font-size: 0.78rem; color: var(--ink-muted); }
+    .card-author { display: flex; align-items: center; gap: 7px; }
+    .mini-av { width: 26px; height: 26px; border-radius: 50%; background: var(--amber); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; }
+    .empty { text-align: center; padding: 70px 20px; color: var(--ink-muted); grid-column: 1/-1; }
+    .empty-icon { font-size: 2.8rem; margin-bottom: 14px; }
+    .empty h3 { font-family: var(--font-display); font-size: 1.3rem; color: var(--ink-light); margin-bottom: 6px; }
+
+    /* ─── ARTICLE VIEW ─── */
+    #view-article { max-width: 760px; margin: 0 auto; padding: 44px 28px; }
+    .back-btn { display: inline-flex; align-items: center; gap: 5px; color: var(--ink-muted); font-size: 0.85rem; background: none; border: none; cursor: pointer; margin-bottom: 28px; transition: var(--t); }
+    .back-btn:hover { color: var(--amber); }
+    .art-cat-badge { display: inline-block; padding: 3px 12px; background: var(--amber-pale); color: var(--amber); border-radius: 40px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
+    .art-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3.8vw, 2.5rem); font-weight: 700; line-height: 1.22; margin-bottom: 18px; }
+    .art-meta { display: flex; align-items: center; gap: 14px; color: var(--ink-muted); font-size: 0.85rem; padding-bottom: 22px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+    .art-av { width: 38px; height: 38px; border-radius: 50%; background: var(--amber); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+    .art-cover { width: 100%; max-height: 420px; object-fit: cover; border-radius: var(--radius); margin-bottom: 28px; }
+    .art-body { font-family: var(--font-article); font-size: 1.08rem; line-height: 1.88; color: var(--ink-light); }
+    .art-body h1 { font-family: var(--font-display); font-size: 1.75rem; color: var(--ink); margin: 28px 0 10px; }
+    .art-body h2 { font-family: var(--font-display); font-size: 1.38rem; color: var(--ink); margin: 24px 0 10px; }
+    .art-body h3 { font-family: var(--font-display); font-size: 1.15rem; color: var(--ink); margin: 18px 0 8px; }
+    .art-body p { margin-bottom: 18px; }
+    .art-body img { max-width: 100%; border-radius: var(--radius); margin: 14px 0; }
+    .art-body ul, .art-body ol { margin: 0 0 16px 24px; }
+    .art-body li { margin-bottom: 6px; }
+
+    .comments-sec { margin-top: 52px; padding-top: 36px; border-top: 1px solid var(--border); }
+    .comments-ttl { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 22px; }
+    .cmt-input-row { display: flex; gap: 10px; margin-bottom: 28px; }
+    .cmt-ta { flex: 1; padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius); font-family: var(--font-body); font-size: 0.875rem; resize: none; outline: none; transition: var(--t); background: white; }
+    .cmt-ta:focus { border-color: var(--amber); }
+    .btn-cmt { padding: 11px 18px; background: var(--ink); color: #fff; border: none; border-radius: var(--radius); font-size: 0.85rem; cursor: pointer; align-self: flex-end; transition: var(--t); }
+    .btn-cmt:hover { background: var(--amber); }
+    .cmt-item { display: flex; gap: 10px; padding: 14px 0; border-bottom: 1px solid var(--cream-dark); }
+    .cmt-av { width: 34px; height: 34px; border-radius: 50%; background: var(--amber); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
+    .cmt-author { font-weight: 600; font-size: 0.85rem; } .cmt-text { font-size: 0.88rem; color: var(--ink-light); margin-top: 2px; } .cmt-time { font-size: 0.74rem; color: var(--ink-muted); margin-top: 3px; }
+
+    /* ─── WRITE VIEW ─── */
+    #view-write { max-width: 1100px; margin: 0 auto; padding: 28px 28px; gap: 28px; align-items: flex-start; }
+    .write-main { flex: 1; min-width: 0; }
+    .write-side { width: 268px; flex-shrink: 0; position: sticky; top: 78px; }
+
+    .toolbar { display: flex; flex-wrap: wrap; gap: 3px; padding: 9px 10px; background: white; border: 1px solid var(--border); border-bottom: none; border-radius: var(--radius) var(--radius) 0 0; align-items: center; }
+    .tb { padding: 5px 9px; border: none; background: transparent; border-radius: 4px; cursor: pointer; font-size: 0.82rem; color: var(--ink-light); transition: var(--t); line-height: 1; }
+    .tb:hover { background: var(--cream-dark); }
+    .tb-sep { width: 1px; height: 18px; background: var(--border); margin: 0 3px; }
+    .tb-color { width: 26px; height: 26px; border-radius: 4px; border: 1px solid var(--border); cursor: pointer; overflow: hidden; position: relative; }
+    .tb-color input[type=color] { position: absolute; inset: 0; width: 130%; height: 130%; opacity: 0; cursor: pointer; transform: translate(-10%, -10%); }
+    .tb-select { padding: 4px 7px; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.78rem; background: white; color: var(--ink); cursor: pointer; outline: none; }
+
+    .write-title { width: 100%; padding: 14px 14px; font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; border: 1px solid var(--border); border-top: none; border-bottom: none; outline: none; color: var(--ink); background: white; }
+    .write-title::placeholder { color: var(--ink-muted); }
+    .editor { min-height: 480px; padding: 14px; border: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius); outline: none; font-family: var(--font-article); font-size: 1rem; line-height: 1.82; color: var(--ink-light); background: white; }
+    .editor:empty::before { content: attr(data-placeholder); color: var(--ink-muted); pointer-events: none; display: block; }
+    .editor h1 { font-family: var(--font-display); font-size: 1.75rem; margin: 14px 0 6px; color: var(--ink); }
+    .editor h2 { font-family: var(--font-display); font-size: 1.38rem; margin: 12px 0 6px; color: var(--ink); }
+    .editor h3 { font-family: var(--font-display); font-size: 1.15rem; margin: 10px 0 6px; color: var(--ink); }
+    .editor p { margin-bottom: 10px; }
+    .editor img { max-width: 100%; border-radius: 4px; margin: 6px 0; }
+    .wc-bar { display: flex; justify-content: space-between; padding: 7px 12px; background: var(--cream-dark); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); font-size: 0.78rem; color: var(--ink-muted); }
+    .wc-bar.over { color: var(--error); background: #FEE; }
+
+    .scard { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 14px; }
+    .scard h4 { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; color: var(--ink); }
+    .s-select { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-family: var(--font-body); font-size: 0.85rem; background: white; color: var(--ink); outline: none; }
+    .tpl-btn { display: block; width: 100%; padding: 7px 10px; text-align: left; background: var(--cream); border: 1px solid var(--border); border-radius: 5px; font-family: var(--font-body); font-size: 0.8rem; color: var(--ink-light); cursor: pointer; margin-bottom: 5px; transition: var(--t); }
+    .tpl-btn:hover { background: var(--amber-pale); border-color: var(--amber-light); color: var(--amber); }
+    .cover-upload-lbl { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; border: 2px dashed var(--border); border-radius: var(--radius); background: var(--cream); color: var(--ink-muted); font-size: 0.82rem; cursor: pointer; transition: var(--t); }
+    .cover-upload-lbl:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-pale); }
+    .cover-prev { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; margin-top: 7px; display: none; }
+    .seo-lbl { font-size: 0.72rem; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 4px; }
+    .seo-inp { width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: 5px; font-family: var(--font-body); font-size: 0.8rem; outline: none; background: var(--cream); margin-bottom: 7px; transition: var(--t); }
+    .seo-inp:focus { border-color: var(--amber); background: white; }
+    .btn-pub { width: 100%; padding: 11px; background: var(--amber); color: #fff; border: none; border-radius: var(--radius); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: var(--t); margin-top: 6px; }
+    .btn-pub:hover { background: var(--terracotta); }
+    .btn-draft { width: 100%; padding: 9px; background: transparent; color: var(--ink-muted); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.85rem; cursor: pointer; transition: var(--t); margin-top: 5px; }
+    .btn-draft:hover { background: var(--cream-dark); color: var(--ink); }
+
+    /* ─── MODALS ─── */
+    .overlay { position: fixed; inset: 0; background: rgba(26,18,8,0.58); z-index: 300; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    .overlay.hidden { display: none; }
+    .mbox { background: white; border-radius: var(--radius-lg); padding: 38px; max-width: 420px; width: 92%; box-shadow: var(--shadow-lg); animation: mIn .18s ease; }
+    @keyframes mIn { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* Login */
+    .g-logo { text-align: center; margin-bottom: 22px; }
+    .m-title { font-family: var(--font-display); font-size: 1.35rem; text-align: center; margin-bottom: 5px; }
+    .m-sub { text-align: center; font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 26px; }
+    .ff { margin-bottom: 14px; }
+    .ff label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+    .ff input { width: 100%; padding: 10px 13px; border: 1px solid var(--border); border-radius: var(--radius); font-family: var(--font-body); font-size: 0.9rem; outline: none; transition: var(--t); }
+    .ff input:focus { border-color: var(--amber); }
+    .btn-goog { width: 100%; padding: 11px; background: var(--ink); color: #fff; border: none; border-radius: var(--radius); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: var(--t); display: flex; align-items: center; justify-content: center; gap: 9px; }
+    .btn-goog:hover { background: var(--amber); }
+    .g-disc { text-align: center; font-size: 0.73rem; color: var(--ink-muted); margin-top: 14px; }
+
+    /* Admin modal */
+    .admin-mbox { max-width: 800px; padding: 0; overflow: hidden; border-radius: var(--radius-lg); }
+    .admin-hdr { padding: 20px 28px; background: var(--ink); color: #fff; display: flex; justify-content: space-between; align-items: center; }
+    .admin-hdr h2 { font-family: var(--font-display); font-size: 1.2rem; }
+    .admin-bdy { padding: 22px 28px; max-height: 580px; overflow-y: auto; }
+    .pin-row { display: flex; gap: 9px; justify-content: center; margin-bottom: 20px; }
+    .pin-d { width: 46px; height: 54px; border: 2px solid var(--border); border-radius: var(--radius); text-align: center; font-size: 1.4rem; font-weight: 600; outline: none; transition: var(--t); }
+    .pin-d:focus { border-color: var(--amber); }
+    .atabs { display: flex; gap: 2px; margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+    .atab { padding: 7px 14px; background: transparent; border: none; border-bottom: 2px solid transparent; font-family: var(--font-body); font-size: 0.82rem; font-weight: 500; color: var(--ink-muted); cursor: pointer; margin-bottom: -1px; transition: var(--t); }
+    .atab.on { color: var(--amber); border-bottom-color: var(--amber); }
+    .rev-card { background: var(--cream); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+    .rev-hdr { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .rev-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; }
+    .rev-meta { font-size: 0.78rem; color: var(--ink-muted); margin-bottom: 6px; }
+    .rev-excerpt { font-size: 0.84rem; color: var(--ink-light); line-height: 1.5; }
+    .rev-acts { display: flex; gap: 7px; margin-top: 10px; }
+    .btn-app { padding: 6px 14px; background: var(--success); color: #fff; border: none; border-radius: 5px; font-family: var(--font-body); font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: var(--t); }
+    .btn-app:hover { opacity: .88; }
+    .btn-rej { padding: 6px 14px; background: var(--error); color: #fff; border: none; border-radius: 5px; font-family: var(--font-body); font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: var(--t); }
+    .btn-rej:hover { opacity: .88; }
+    .btn-prev { padding: 6px 14px; background: transparent; color: var(--ink); border: 1px solid var(--border); border-radius: 5px; font-family: var(--font-body); font-size: 0.78rem; cursor: pointer; transition: var(--t); }
+    .btn-prev:hover { background: var(--cream-dark); }
+    .sbadge { padding: 2px 9px; border-radius: 40px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+    .s-pending { background: #FFF3CD; color: #856404; }
+    .s-approved { background: #D4EDDA; color: #155724; }
+    .s-rejected { background: #F8D7DA; color: #721C24; }
+    .adm-wf input, .adm-wf select, .adm-wf textarea { width: 100%; padding: 8px 11px; border: 1px solid var(--border); border-radius: 5px; font-family: var(--font-body); font-size: 0.85rem; margin-bottom: 9px; outline: none; background: white; }
+    .adm-wf textarea { min-height: 180px; resize: vertical; }
+    .btn-ps { padding: 9px 22px; background: var(--amber); color: #fff; border: none; border-radius: var(--radius); font-family: var(--font-body); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: var(--t); }
+    .btn-ps:hover { background: var(--terracotta); }
+
+    /* My articles */
+    .ma-item { display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; background: var(--cream); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 7px; }
+    .ma-ttl { font-weight: 600; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
+    .ma-sub { font-size: 0.76rem; color: var(--ink-muted); margin-top: 2px; }
+
+    /* Alert */
+    .alert { padding: 10px 16px; border-radius: var(--radius); font-size: 0.85rem; margin-bottom: 13px; }
+    .alert-i { background: #E8F4FD; color: #1A6BA0; border: 1px solid #BDE0F5; }
+    .alert-w { background: #FFF8E6; color: #856404; border: 1px solid #FDEAB3; }
+    .alert-e { background: #FEECEB; color: var(--error); border: 1px solid #F5C6CB; }
+    .alert-s { background: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+
+    /* Toast */
+    #toast { position: fixed; bottom: 22px; right: 22px; background: var(--ink); color: #fff; padding: 11px 18px; border-radius: var(--radius); font-size: 0.85rem; z-index: 500; box-shadow: var(--shadow-lg); display: none; max-width: 310px; animation: tIn .25s ease; }
+    @keyframes tIn { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .x-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: inherit; opacity: 0.7; line-height: 1; }
+    .x-btn:hover { opacity: 1; }
+
+    @media (max-width: 760px) {
+      #view-write.active { flex-direction: column; }
+      .write-side { width: 100%; position: static; }
+      .grid { grid-template-columns: 1fr; }
+      nav { padding: 0 14px; }
+      .hero { padding: 52px 14px; }
+      .home-body { padding: 30px 14px; }
+      #view-article { padding: 28px 14px; }
+      #view-write { padding: 20px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="topnav">
+  <div class="nav-brand" onclick="showView('home')">Ink<span>well</span></div>
+  <div class="nav-right">
+    <button class="nbtn nbtn-ghost" onclick="showView('home')">Explore</button>
+    <span id="nav-auth" style="display:inline-flex;gap:6px;">
+      <button class="nbtn nbtn-dark" onclick="openLogin()">Sign In</button>
+      <button class="nbtn nbtn-amber" onclick="goWrite()">Write ✍️</button>
+    </span>
+    <span id="nav-user" style="display:none;">
+      <div class="user-menu">
+        <div class="avatar" id="av-icon">U</div>
+        <div class="user-drop">
+          <div class="drop-item" onclick="showView('home')">🏠 Explore</div>
+          <div class="drop-item" onclick="goWrite()">✍️ Write Article</div>
+          <div class="drop-item" onclick="openMyArticles()">📄 My Articles</div>
+          <div class="drop-div"></div>
+          <div class="drop-item" onclick="openAdmin()">⚙️ Admin Panel</div>
+          <div class="drop-div"></div>
+          <div class="drop-item" onclick="logout()" style="color:var(--error)">🚪 Sign Out</div>
+        </div>
+      </div>
+    </span>
+  </div>
+</nav>
+
+<!-- HOME VIEW -->
+<div class="view active" id="view-home">
+  <div class="hero">
+    <h1 class="hero-title">Where Words<br><em>Find Home</em></h1>
+    <p class="hero-sub">A curated space for thinkers, storytellers &amp; creators. Read or share what matters.</p>
+    <div class="hero-btns">
+      <button class="btn-hero-p" onclick="goWrite()">Start Writing</button>
+      <button class="btn-hero-s" onclick="document.getElementById('art-sec').scrollIntoView({behavior:'smooth'})">Read Stories</button>
+    </div>
+  </div>
+  <div class="home-body" id="art-sec">
+    <div class="search-row">
+      <input type="text" class="search-inp" id="search-inp" placeholder="🔍  Search articles, authors..." oninput="renderArticles()">
+    </div>
+    <div class="cat-bar" id="cat-bar">
+      <button class="cat-btn on" onclick="setCat(this,'all')">All</button>
+      <button class="cat-btn" onclick="setCat(this,'Technology')">💻 Technology</button>
+      <button class="cat-btn" onclick="setCat(this,'Culture')">🎭 Culture</button>
+      <button class="cat-btn" onclick="setCat(this,'Science')">🔬 Science</button>
+      <button class="cat-btn" onclick="setCat(this,'Opinion')">💬 Opinion</button>
+      <button class="cat-btn" onclick="setCat(this,'Lifestyle')">✨ Lifestyle</button>
+      <button class="cat-btn" onclick="setCat(this,'Literature')">📚 Literature</button>
+      <button class="cat-btn" onclick="setCat(this,'Politics')">🏛 Politics</button>
+      <button class="cat-btn" onclick="setCat(this,'Health')">💚 Health</button>
+      <button class="cat-btn" onclick="setCat(this,'Travel')">🌍 Travel</button>
+      <button class="cat-btn" onclick="setCat(this,'Education')">🎓 Education</button>
+    </div>
+    <div class="grid" id="art-grid"></div>
+  </div>
+</div>
+
+<!-- ARTICLE VIEW -->
+<div class="view" id="view-article"></div>
+
+<!-- WRITE VIEW -->
+<div class="view" id="view-write">
+  <div class="write-main">
+    <div class="toolbar">
+      <select class="tb-select" onchange="fmtBlock(this.value);this.value='p'">
+        <option value="p">Paragraph</option>
+        <option value="h1">Heading 1</option>
+        <option value="h2">Heading 2</option>
+        <option value="h3">Heading 3</option>
+      </select>
+      <div class="tb-sep"></div>
+      <button class="tb" onclick="cmd('bold')" title="Bold"><b>B</b></button>
+      <button class="tb" onclick="cmd('italic')" title="Italic"><i>I</i></button>
+      <button class="tb" onclick="cmd('underline')" title="Underline"><u>U</u></button>
+      <button class="tb" onclick="cmd('strikeThrough')" title="Strike"><s>S</s></button>
+      <div class="tb-sep"></div>
+      <div class="tb-color" title="Text colour" style="background:#1A1208">
+        <input type="color" value="#1A1208" onchange="cmd('foreColor',this.value)" title="Text colour">
+      </div>
+      <div class="tb-color" title="Highlight" style="background:#FFFBE6">
+        <input type="color" value="#FFFBE6" onchange="cmd('hiliteColor',this.value)" title="Highlight">
+      </div>
+      <div class="tb-sep"></div>
+      <button class="tb" onclick="cmd('insertUnorderedList')" title="Bullets">• List</button>
+      <button class="tb" onclick="cmd('insertOrderedList')" title="Numbers">1. List</button>
+      <button class="tb" onclick="cmd('justifyLeft')" title="Left">⬅</button>
+      <button class="tb" onclick="cmd('justifyCenter')" title="Centre">⬌</button>
+      <button class="tb" onclick="cmd('justifyRight')" title="Right">➡</button>
+      <div class="tb-sep"></div>
+      <button class="tb" onclick="trigInlineImg()" title="Insert image">🖼 Image</button>
+      <input type="file" id="inline-img" accept="image/*" style="display:none" onchange="insertImg(this)">
+      <div class="tb-sep"></div>
+      <button class="tb" onclick="cmd('undo')">↩</button>
+      <button class="tb" onclick="cmd('redo')">↪</button>
+    </div>
+    <input type="text" id="w-title" class="write-title" placeholder="Article title…" maxlength="200">
+    <div id="editor" class="editor" contenteditable="true" data-placeholder="Begin your story… (max 1000 words)" oninput="updateWC()"></div>
+    <div class="wc-bar" id="wc-bar">
+      <span id="wc-text">0 / 1000 words</span>
+      <span id="wc-hint">Tip: clarity resonates.</span>
+    </div>
+  </div>
+
+  <div class="write-side">
+    <div class="scard">
+      <h4>📁 Category</h4>
+      <select class="s-select" id="w-cat">
+        <option value="">— Choose category —</option>
+        <option>Technology</option><option>Culture</option><option>Science</option>
+        <option>Opinion</option><option>Lifestyle</option><option>Literature</option>
+        <option>Politics</option><option>Health</option><option>Travel</option><option>Education</option>
+      </select>
+    </div>
+
+    <div class="scard">
+      <h4>🖼 Cover Image</h4>
+      <label class="cover-upload-lbl">
+        📷 Upload Cover
+        <input type="file" id="cover-inp" accept="image/*" style="display:none" onchange="prevCover(this)">
+      </label>
+      <img id="cover-prev" class="cover-prev" alt="">
+    </div>
+
+    <div class="scard">
+      <h4>📝 Templates</h4>
+      <button class="tpl-btn" onclick="applyTpl('essay')">📖 Essay</button>
+      <button class="tpl-btn" onclick="applyTpl('howto')">🛠 How-To Guide</button>
+      <button class="tpl-btn" onclick="applyTpl('story')">💫 Personal Story</button>
+      <button class="tpl-btn" onclick="applyTpl('opinion')">💬 Opinion Piece</button>
+      <button class="tpl-btn" onclick="applyTpl('review')">⭐ Review</button>
+    </div>
+
+    <div class="scard">
+      <h4>🔍 SEO</h4>
+      <label class="seo-lbl">Meta Title</label>
+      <input type="text" class="seo-inp" id="w-seo-t" placeholder="60 char max" maxlength="60">
+      <label class="seo-lbl">Meta Description</label>
+      <input type="text" class="seo-inp" id="w-seo-d" placeholder="160 char max" maxlength="160">
+    </div>
+
+    <div class="scard">
+      <h4>📤 Publish</h4>
+      <div id="pub-alert"></div>
+      <button class="btn-pub" onclick="submitArticle()">Submit for Review</button>
+      <button class="btn-draft" onclick="saveDraft()">Save Draft 💾</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="overlay hidden" id="login-modal">
+  <div class="mbox">
+    <div class="g-logo">
+      <svg width="46" height="46" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+    </div>
+    <h2 class="m-title">Sign in to Inkwell</h2>
+    <p class="m-sub">Use your Google account to write and publish articles</p>
+    <div class="ff">
+      <label>Full Name</label>
+      <input type="text" id="ln-name" placeholder="Your name" autocomplete="name">
+    </div>
+    <div class="ff">
+      <label>Google Email</label>
+      <input type="email" id="ln-email" placeholder="you@gmail.com" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-goog" onclick="doLogin()">
+      <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <button onclick="close$('login-modal')" style="display:block;width:100%;margin-top:8px;padding:9px;background:transparent;border:none;color:var(--ink-muted);cursor:pointer;font-family:var(--font-body);font-size:0.85rem;">Cancel</button>
+    <p class="g-disc">Your email is used only for identification on Inkwell.</p>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="overlay hidden" id="admin-modal">
+  <div class="mbox admin-mbox" style="max-width:820px;width:95%;">
+    <div class="admin-hdr">
+      <h2>⚙️ Admin Panel</h2>
+      <button class="x-btn" onclick="close$('admin-modal')" style="color:white;font-size:1.2rem;">✕</button>
+    </div>
+    <div class="admin-bdy" id="admin-bdy"></div>
+  </div>
+</div>
+
+<!-- MY ARTICLES MODAL -->
+<div class="overlay hidden" id="ma-modal">
+  <div class="mbox" style="max-width:580px;width:95%;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+      <h2 style="font-family:var(--font-display);font-size:1.25rem;">My Articles</h2>
+      <button class="x-btn" onclick="close$('ma-modal')" style="color:var(--ink);">✕</button>
+    </div>
+    <div id="ma-list"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── STORAGE ──────────────────────────────────────────────
+async function put(k,v){try{await window.storage.set(k,JSON.stringify(v));}catch(e){}}
+async function get(k){try{const r=await window.storage.get(k);return r?JSON.parse(r.value):null;}catch(e){return null;}}
+
+// ── STATE ─────────────────────────────────────────────────
+let USER=null, ARTS=[], CMTS={}, PIN='123456', DRAFTS={};
+let ACTIVE_CAT='all', CUR_ART=null, ADMIN_AUTH=false, ATAB='pending';
+
+// ── INIT ──────────────────────────────────────────────────
+async function init(){
+  USER=await get('iw_user');
+  if(USER) applyUser();
+  ARTS=await get('iw_arts')||[];
+  CMTS=await get('iw_cmts')||{};
+  PIN=await get('iw_pin')||'123456';
+  DRAFTS=await get('iw_drafts')||{};
+  if(!ARTS.length) await seedArts();
+  renderArticles();
+}
+
+async function seedArts(){
+  ARTS=[
+    {id:'s1',title:'The Philosophy of Silence in the Age of Noise',
+     content:'<p>We live in an era defined by constant stimulation. Notifications, feeds, breaking news — our attention is perpetually fragmented. Yet ancient philosophers across traditions — from the Stoics to the Zen masters — recognized silence as a prerequisite for genuine thought.</p><h2>Why Silence Matters</h2><p>Modern neuroscience supports what the sages knew: the brain needs quiet to consolidate memory, process emotion, and generate insight. The Default Mode Network — active during rest and introspection — is where creativity gestates.</p><h2>Reclaiming Quiet</h2><p>The practice of deliberate silence need not be monastic. It begins with small choices: a walk without earphones, a meal without a screen, a morning begun without reaching for the phone. These micro-silences accumulate into something profound.</p><p>As Pascal observed centuries ago: all of humanity\'s problems stem from the inability to sit quietly in a room alone. In our age, this observation cuts deeper than ever.</p>',
+     excerpt:'Ancient philosophers knew what neuroscience confirms: silence is not the absence of something — it is the presence of everything.',
+     category:'Opinion',author:{name:'Inkwell Editor',email:'admin@inkwell.com',initials:'IE'},
+     status:'approved',createdAt:Date.now()-86400000*4,publishedAt:Date.now()-86400000*3,
+     coverImage:null,readTime:4,seoTitle:'Philosophy of Silence',seoDesc:'Why silence matters in a world of constant noise.',isAdmin:true},
+    {id:'s2',title:'How Varanasi Teaches You to Let Go',
+     content:'<p>There is a city on the banks of the Ganges where the living and the dying coexist in plain sight. Varanasi — known also as Kashi, the City of Light — is unlike any other place on earth.</p><h2>The Ghats at Dawn</h2><p>I arrived before sunrise, following a narrow lane that opened onto the river. The ghats were already alive: priests performing aarti, pilgrims waist-deep in the sacred water, boatmen calling from wooden crafts. Above it all, smoke rose from the cremation grounds at Manikarnika.</p><h2>What the City Teaches</h2><p>Varanasi is, at its core, a meditation on impermanence. In a culture that often keeps death at arm\'s length, this city places it at the centre — not morbidly, but matter-of-factly. Life continues around the pyres with astonishing normalcy.</p><p>To spend time here is to absorb the lesson that all things pass — and that this is not cause for grief, but for presence.</p>',
+     excerpt:'On the ghats of the Ganges, where life and death share the same riverbank, a traveller learns the art of letting go.',
+     category:'Travel',author:{name:'Inkwell Editor',email:'admin@inkwell.com',initials:'IE'},
+     status:'approved',createdAt:Date.now()-86400000*7,publishedAt:Date.now()-86400000*6,
+     coverImage:null,readTime:5,seoTitle:'Varanasi Teaches Letting Go',seoDesc:'A travel essay about impermanence and the sacred city on the Ganges.',isAdmin:true},
+    {id:'s3',title:'Why Deep Work is the Skill of the Century',
+     content:'<p>Cal Newport\'s concept of deep work — cognitively demanding activity performed in a state of distraction-free concentration — may be the most important professional capacity of our time. As automation displaces routine tasks, the ability to learn hard things quickly and produce at an elite level becomes ever more rare and valuable.</p><h2>The Shallow Work Trap</h2><p>Most knowledge workers spend their days in a fog of email, meetings, and social media. These shallow activities create an illusion of productivity while crowding out the focused work that actually moves the needle. The constant switching incurs a cognitive cost that compounds over time.</p><h2>Building the Capacity</h2><p>Deep work is a skill, not a talent. It can be trained like a muscle. Start with blocks of 60–90 uninterrupted minutes, eliminate all notifications, and choose one cognitively demanding task. Over weeks and months, the capacity for sustained focus grows remarkably.</p>',
+     excerpt:'In an economy that rewards rare and valuable skills, the ability to focus deeply is becoming the defining professional advantage.',
+     category:'Education',author:{name:'Inkwell Editor',email:'admin@inkwell.com',initials:'IE'},
+     status:'approved',createdAt:Date.now()-86400000*2,publishedAt:Date.now()-86400000*1,
+     coverImage:null,readTime:4,seoTitle:'Deep Work Skill of the Century',seoDesc:'Why focused, distraction-free work is the most valuable professional skill today.',isAdmin:true}
+  ];
+  await put('iw_arts',ARTS);
+}
+
+// ── VIEWS ─────────────────────────────────────────────────
+function showView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  window.scrollTo(0,0);
+  if(v==='home') renderArticles();
+}
+
+// ── AUTH ──────────────────────────────────────────────────
+function openLogin(){ document.getElementById('login-modal').classList.remove('hidden'); setTimeout(()=>document.getElementById('ln-name').focus(),100); }
+function close$(id){ document.getElementById(id).classList.add('hidden'); }
+
+async function doLogin(){
+  const name=(document.getElementById('ln-name').value||'').trim();
+  const email=(document.getElementById('ln-email').value||'').trim();
+  if(!name||!email){toast('Please enter name and email.');return;}
+  if(!/\S+@\S+\.\S+/.test(email)){toast('Enter a valid email address.');return;}
+  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||name[0].toUpperCase();
+  USER={name,email,initials};
+  await put('iw_user',USER);
+  applyUser();
+  close$('login-modal');
+  toast(`Welcome, ${name}! 🎉`);
+}
+function applyUser(){
+  document.getElementById('nav-auth').style.display='none';
+  document.getElementById('nav-user').style.display='inline-flex';
+  document.getElementById('av-icon').textContent=USER.initials;
+}
+async function logout(){
+  USER=null;
+  try{await window.storage.delete('iw_user');}catch(e){}
+  document.getElementById('nav-auth').style.display='inline-flex';
+  document.getElementById('nav-user').style.display='none';
+  showView('home');
+  toast('Signed out. See you soon!');
+}
+
+// ── WRITE ─────────────────────────────────────────────────
+function goWrite(){
+  if(!USER){openLogin();return;}
+  const ws=getWeekStart();
+  const wc=ARTS.filter(a=>a.author.email===USER.email&&a.createdAt>=ws&&!a.isAdmin).length;
+  const pa=document.getElementById('pub-alert');
+  pa.innerHTML=wc>=2?'<div class="alert alert-w">⚠️ Weekly limit reached (2/2). Come back next week!</div>':'';
+  showView('write');
+  const d=DRAFTS[USER.email];
+  if(d){
+    document.getElementById('w-title').value=d.title||'';
+    document.getElementById('editor').innerHTML=d.content||'';
+    if(d.cat)document.getElementById('w-cat').value=d.cat;
+    if(d.st)document.getElementById('w-seo-t').value=d.st;
+    if(d.sd)document.getElementById('w-seo-d').value=d.sd;
+    updateWC();
+  }else{
+    document.getElementById('w-title').value='';
+    document.getElementById('editor').innerHTML='';
+    document.getElementById('w-cat').value='';
+    document.getElementById('w-seo-t').value='';
+    document.getElementById('w-seo-d').value='';
+    document.getElementById('cover-prev').style.display='none';
+    updateWC();
+  }
+}
+function getWeekStart(){const n=new Date(),d=n.getDay(),diff=n.getDate()-d+(d===0?-6:1);return new Date(new Date(n).setDate(diff)).setHours(0,0,0,0);}
+
+function cmd(c,v=null){document.getElementById('editor').focus();v?document.execCommand(c,false,v):document.execCommand(c,false,null);}
+function fmtBlock(t){document.getElementById('editor').focus();document.execCommand('formatBlock',false,t==='p'?'p':t);}
+
+function updateWC(){
+  const txt=(document.getElementById('editor').innerText||'').trim();
+  const wds=txt===''?0:txt.split(/\s+/).filter(w=>w.length>0).length;
+  const bar=document.getElementById('wc-bar');
+  document.getElementById('wc-text').textContent=`${wds} / 1000 words`;
+  if(wds>1000){bar.classList.add('over');document.getElementById('wc-hint').textContent=`⚠️ ${wds-1000} words over limit`;}
+  else{bar.classList.remove('over');document.getElementById('wc-hint').textContent=wds>=900?`${1000-wds} words left`:'Tip: clarity resonates.';}
+}
+function wordCount(){const t=(document.getElementById('editor').innerText||'').trim();return t===''?0:t.split(/\s+/).filter(w=>w.length>0).length;}
+
+function trigInlineImg(){document.getElementById('inline-img').click();}
+function insertImg(inp){
+  if(!inp.files||!inp.files[0])return;
+  const r=new FileReader();
+  r.onload=e=>{document.getElementById('editor').focus();document.execCommand('insertHTML',false,`<img src="${e.target.result}" style="max-width:100%;border-radius:5px;margin:6px 0;" alt="image">`)};
+  r.readAsDataURL(inp.files[0]);inp.value='';
+}
+function prevCover(inp){
+  if(!inp.files||!inp.files[0])return;
+  const r=new FileReader();
+  r.onload=e=>{const p=document.getElementById('cover-prev');p.src=e.target.result;p.style.display='block';};
+  r.readAsDataURL(inp.files[0]);
+}
+
+// ── TEMPLATES ─────────────────────────────────────────────
+const TPLS={
+  essay:{title:'Essay Title',html:'<h2>Introduction</h2><p>Begin with a compelling hook — a question, an observation, or a startling fact.</p><h2>Body — Part I</h2><p>Develop your first major argument here. Use evidence, examples, and reasoning.</p><h2>Body — Part II</h2><p>Expand your argument. Introduce nuance or a deeper layer of thinking.</p><h2>Conclusion</h2><p>Return to your opening idea with greater depth. Leave the reader with something to carry forward.</p>'},
+  howto:{title:'How to [Do Something]',html:'<h2>Overview</h2><p>Briefly explain what you\'ll teach and why it matters.</p><h2>Step 1: [First Step]</h2><p>Clear, actionable instructions. Be specific and direct.</p><h2>Step 2: [Second Step]</h2><p>Build on the previous step with more detail.</p><h2>Step 3: [Final Step]</h2><p>The most important or final step.</p><h2>Tips &amp; Troubleshooting</h2><p>Common mistakes and how to avoid them.</p>'},
+  story:{title:'A Story About [Subject]',html:'<h2>Setting the Scene</h2><p>Place the reader in a specific moment. Where are you? What do you see, hear, feel?</p><h2>The Journey</h2><p>What happened? Take the reader through the experience with honesty and detail.</p><h2>The Turning Point</h2><p>What changed? What did you discover?</p><h2>The Lesson</h2><p>What did you carry away from this experience?</p>'},
+  opinion:{title:'Why [Your Position]',html:'<h2>My Stance</h2><p>State your argument clearly and confidently. Don\'t bury the lead.</p><h2>The Case For It</h2><p>Present your strongest arguments with evidence and real-world examples.</p><h2>The Other Side</h2><p>Acknowledge the strongest counterarguments honestly before addressing them.</p><h2>Final Thought</h2><p>Bring the reader back to what matters most. End with conviction.</p>'},
+  review:{title:'[Title] — A Review',html:'<h2>At a Glance</h2><p>One paragraph summary of what you\'re reviewing and your overall verdict.</p><h2>What Works</h2><p>The strengths — be specific and give examples.</p><h2>What Doesn\'t</h2><p>The weaknesses — be fair and constructive.</p><h2>The Verdict</h2><p>Who should read/watch/use this? Is it worth the time?</p>'}
+};
+function applyTpl(t){
+  const tpl=TPLS[t];if(!tpl)return;
+  if(document.getElementById('editor').innerText.trim().length>20&&!confirm('Replace current content with this template?'))return;
+  document.getElementById('w-title').value=tpl.title;
+  document.getElementById('editor').innerHTML=tpl.html;
+  updateWC();toast('Template applied ✨');
+}
+
+// ── SUBMIT ────────────────────────────────────────────────
+async function submitArticle(){
+  if(!USER){openLogin();return;}
+  const title=(document.getElementById('w-title').value||'').trim();
+  const html=document.getElementById('editor').innerHTML.trim();
+  const cat=document.getElementById('w-cat').value;
+  const seoT=(document.getElementById('w-seo-t').value||'').trim();
+  const seoD=(document.getElementById('w-seo-d').value||'').trim();
+  if(!title){toast('Add a title first.');return;}
+  if(!cat){toast('Select a category.');return;}
+  if((document.getElementById('editor').innerText||'').trim().length<20){toast('Article is too short.');return;}
+  const wc=wordCount();
+  if(wc>1000){toast(`Over limit — ${wc}/1000 words. Please trim.`);return;}
+  const ws=getWeekStart();
+  const weekly=ARTS.filter(a=>a.author.email===USER.email&&a.createdAt>=ws&&!a.isAdmin).length;
+  if(weekly>=2){toast('2 articles/week limit reached. Try next week.');return;}
+  const coverEl=document.getElementById('cover-prev');
+  const cover=coverEl.style.display!=='none'?coverEl.src:null;
+  const excerpt=(document.getElementById('editor').innerText||'').trim().slice(0,190)+'…';
+  const art={
+    id:'a_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    title,content:html,excerpt,category:cat,
+    author:{name:USER.name,email:USER.email,initials:USER.initials},
+    status:'pending',createdAt:Date.now(),publishedAt:null,
+    coverImage:cover,readTime:Math.max(1,Math.ceil(wc/200)),
+    seoTitle:seoT||title,seoDesc:seoD||excerpt,isAdmin:false
+  };
+  ARTS.unshift(art);
+  await put('iw_arts',ARTS);
+  if(DRAFTS[USER.email]){delete DRAFTS[USER.email];await put('iw_drafts',DRAFTS);}
+  document.getElementById('w-title').value='';
+  document.getElementById('editor').innerHTML='';
+  document.getElementById('cover-prev').style.display='none';
+  toast('✅ Submitted for review! You\'ll be published once approved.');
+  showView('home');renderArticles();
+}
+
+async function saveDraft(){
+  if(!USER)return;
+  DRAFTS[USER.email]={title:document.getElementById('w-title').value,content:document.getElementById('editor').innerHTML,cat:document.getElementById('w-cat').value,st:document.getElementById('w-seo-t').value,sd:document.getElementById('w-seo-d').value};
+  await put('iw_drafts',DRAFTS);toast('Draft saved 💾');
+}
+
+// ── RENDER ARTICLES ───────────────────────────────────────
+const CATS={Technology:'💻',Culture:'🎭',Science:'🔬',Opinion:'💬',Lifestyle:'✨',Literature:'📚',Politics:'🏛',Health:'💚',Travel:'🌍',Education:'🎓'};
+
+function setCat(btn,cat){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');ACTIVE_CAT=cat;renderArticles();
+}
+
+function renderArticles(){
+  const grid=document.getElementById('art-grid');
+  const q=(document.getElementById('search-inp')?.value||'').toLowerCase();
+  let list=ARTS.filter(a=>a.status==='approved');
+  if(ACTIVE_CAT!=='all')list=list.filter(a=>a.category===ACTIVE_CAT);
+  if(q)list=list.filter(a=>a.title.toLowerCase().includes(q)||a.excerpt.toLowerCase().includes(q)||a.author.name.toLowerCase().includes(q));
+  if(!list.length){grid.innerHTML='<div class="empty"><div class="empty-icon">✍️</div><h3>No articles here yet</h3><p>Be the first to write something wonderful.</p></div>';return;}
+  const fmt=ts=>new Date(ts).toLocaleDateString('en-IN',{month:'short',day:'numeric',year:'numeric'});
+  grid.innerHTML=list.map(a=>{
+    const em=CATS[a.category]||'📄';
+    const cov=a.coverImage?`<img src="${a.coverImage}" alt="">`:`<div style="font-size:2.4rem">${em}</div>`;
+    return `<div class="card" onclick="openArt('${a.id}')">
+      <div class="card-cover">${cov}</div>
+      <div class="card-body">
+        <div class="card-cat">${em} ${esc(a.category)}</div>
+        <div class="card-title">${esc(a.title)}</div>
+        <div class="card-excerpt">${esc(a.excerpt)}</div>
+        <div class="card-foot">
+          <div class="card-author"><div class="mini-av">${esc(a.author.initials)}</div><span>${esc(a.author.name)}</span></div>
+          <span>${a.readTime}m · ${fmt(a.publishedAt||a.createdAt)}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openArt(id){
+  const a=ARTS.find(x=>x.id===id);if(!a)return;
+  CUR_ART=id;
+  document.title=(a.seoTitle||a.title)+' — Inkwell';
+  const metaD=document.querySelector('meta[name="description"]');
+  if(metaD)metaD.content=a.seoDesc||a.excerpt;
+  const em=CATS[a.category]||'📄';
+  const dt=new Date(a.publishedAt||a.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  const cmts=(CMTS[id]||[]).map(c=>`<div class="cmt-item"><div class="cmt-av">${esc(c.ai)}</div><div><div class="cmt-author">${esc(c.n)}</div><div class="cmt-text">${esc(c.t)}</div><div class="cmt-time">${new Date(c.ts).toLocaleDateString('en-IN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div></div>`).join('');
+  const cov=a.coverImage?`<img src="${a.coverImage}" alt="" class="art-cover">`:'';
+  const cmtArea=`<div class="cmt-input-row"><textarea class="cmt-ta" id="cmt-in" rows="2" placeholder="${USER?'Share your thoughts…':'Sign in to comment…'}"></textarea><button class="btn-cmt" onclick="postCmt('${id}')">${USER?'Post':'Sign in'}</button></div>`;
+  document.getElementById('view-article').innerHTML=`
+    <button class="back-btn" onclick="goBack()">← Back to articles</button>
+    <div class="art-cat-badge">${em} ${esc(a.category)}</div>
+    <h1 class="art-title">${esc(a.title)}</h1>
+    <div class="art-meta">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="art-av">${esc(a.author.initials)}</div>
+        <div><div style="font-weight:600;color:var(--ink)">${esc(a.author.name)}</div><div>${dt} · ${a.readTime} min read</div></div>
+      </div>
+    </div>
+    ${cov}
+    <div class="art-body">${a.content}</div>
+    <div class="comments-sec">
+      <h3 class="comments-ttl">💬 ${(CMTS[id]||[]).length} Comment${(CMTS[id]||[]).length!==1?'s':''}</h3>
+      ${cmtArea}
+      <div>${cmts||'<p style="color:var(--ink-muted);font-size:0.88rem">No comments yet. Be the first!</p>'}</div>
+    </div>`;
+  showView('article');
+}
+function goBack(){document.title='Inkwell — Where Words Find Home';showView('home');}
+
+async function postCmt(id){
+  if(!USER){openLogin();return;}
+  const inp=document.getElementById('cmt-in');
+  const t=(inp?.value||'').trim();if(!t)return;
+  if(!CMTS[id])CMTS[id]=[];
+  CMTS[id].push({n:USER.name,ai:USER.initials,t,ts:Date.now()});
+  await put('iw_cmts',CMTS);
+  openArt(id);
+}
+
+// ── ADMIN ─────────────────────────────────────────────────
+function openAdmin(){ADMIN_AUTH=false;renderAdminBdy();document.getElementById('admin-modal').classList.remove('hidden');}
+
+function renderAdminBdy(){
+  const bdy=document.getElementById('admin-bdy');
+  if(!ADMIN_AUTH){
+    bdy.innerHTML=`<div style="text-align:center;padding:18px 0 26px">
+      <p style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:6px">Admin PIN</p>
+      <p style="color:var(--ink-muted);font-size:0.84rem;margin-bottom:22px">Enter your 6-digit PIN to access the panel.</p>
+      <div class="pin-row">${[0,1,2,3,4,5].map(i=>`<input type="password" maxlength="1" class="pin-d" id="pd${i}" oninput="pNext(${i})" onkeydown="pBack(event,${i})" inputmode="numeric">`).join('')}</div>
+      <p id="perr" style="color:var(--error);font-size:0.82rem;min-height:18px;margin-bottom:10px"></p>
+      <button onclick="verifyPin()" style="padding:9px 30px;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:0.9rem;cursor:pointer">Unlock</button>
+      <p style="margin-top:14px;font-size:0.75rem;color:var(--ink-muted)">Default PIN: 123456 — change it in Settings after login.</p>
+    </div>`;
+    setTimeout(()=>document.getElementById('pd0')?.focus(),80);
+  }else{renderAdminPanel();}
+}
+function pNext(i){const v=document.getElementById('pd'+i).value;if(v&&i<5)document.getElementById('pd'+(i+1)).focus();if(i===5&&v)verifyPin();}
+function pBack(e,i){if(e.key==='Backspace'&&!document.getElementById('pd'+i).value&&i>0)document.getElementById('pd'+(i-1)).focus();}
+async function verifyPin(){
+  const entered=[0,1,2,3,4,5].map(i=>(document.getElementById('pd'+i)?.value||'')).join('');
+  if(entered===PIN){ADMIN_AUTH=true;renderAdminBdy();}
+  else{document.getElementById('perr').textContent='Incorrect PIN.';[0,1,2,3,4,5].forEach(i=>{const el=document.getElementById('pd'+i);if(el)el.value='';});document.getElementById('pd0')?.focus();}
+}
+
+function renderAdminPanel(){
+  const pen=ARTS.filter(a=>a.status==='pending');
+  const app=ARTS.filter(a=>a.status==='approved');
+  const rej=ARTS.filter(a=>a.status==='rejected');
+  document.getElementById('admin-bdy').innerHTML=`
+    <div class="atabs">
+      <button class="atab ${ATAB==='pending'?'on':''}" onclick="setATab('pending')">⏳ Pending (${pen.length})</button>
+      <button class="atab ${ATAB==='approved'?'on':''}" onclick="setATab('approved')">✅ Published (${app.length})</button>
+      <button class="atab ${ATAB==='rejected'?'on':''}" onclick="setATab('rejected')">❌ Rejected (${rej.length})</button>
+      <button class="atab ${ATAB==='write'?'on':''}" onclick="setATab('write')">✍️ Admin Write</button>
+      <button class="atab ${ATAB==='settings'?'on':''}" onclick="setATab('settings')">⚙️ Settings</button>
+    </div>
+    <div id="atab-cnt"></div>`;
+  renderATab();
+}
+function setATab(t){ATAB=t;renderAdminPanel();}
+
+function renderATab(){
+  const c=document.getElementById('atab-cnt');
+  if(ATAB==='pending'){
+    const pen=ARTS.filter(a=>a.status==='pending');
+    c.innerHTML=pen.length?pen.map(revCard).join(''):'<p style="color:var(--ink-muted);text-align:center;padding:28px">No pending articles 🎉</p>';
+  }else if(ATAB==='approved'){
+    const app=ARTS.filter(a=>a.status==='approved');
+    c.innerHTML=app.length?app.map(a=>revCard(a,true)).join(''):'<p style="color:var(--ink-muted);padding:16px">No published articles.</p>';
+  }else if(ATAB==='rejected'){
+    const rej=ARTS.filter(a=>a.status==='rejected');
+    c.innerHTML=rej.length?rej.map(a=>revCard(a,false,true)).join(''):'<p style="color:var(--ink-muted);padding:16px">No rejected articles.</p>';
+  }else if(ATAB==='write'){
+    c.innerHTML=`<p style="color:var(--ink-muted);font-size:0.84rem;margin-bottom:14px">As admin, articles are published instantly without review.</p>
+      <div class="adm-wf">
+        <input type="text" id="aw-t" placeholder="Article title…" maxlength="200">
+        <select id="aw-c"><option value="">Select category</option><option>Technology</option><option>Culture</option><option>Science</option><option>Opinion</option><option>Lifestyle</option><option>Literature</option><option>Politics</option><option>Health</option><option>Travel</option><option>Education</option></select>
+        <textarea id="aw-body" placeholder="Write here… HTML tags supported (e.g. &lt;h2&gt;, &lt;p&gt;, &lt;strong&gt;)"></textarea>
+        <input type="text" id="aw-st" placeholder="SEO title (optional)">
+        <input type="text" id="aw-sd" placeholder="SEO description (optional)">
+        <button class="btn-ps" onclick="adminPub()">Publish Now →</button>
+      </div>`;
+  }else if(ATAB==='settings'){
+    const total=ARTS.length,pub=ARTS.filter(a=>a.status==='approved').length,pend=ARTS.filter(a=>a.status==='pending').length,authors=new Set(ARTS.map(a=>a.author.email)).size;
+    c.innerHTML=`<div style="max-width:320px">
+      <h4 style="font-family:var(--font-display);margin-bottom:14px">Change Admin PIN</h4>
+      <div class="ff"><label>New 6-Digit PIN</label><input type="password" id="np1" maxlength="6" placeholder="••••••" inputmode="numeric"></div>
+      <div class="ff"><label>Confirm PIN</label><input type="password" id="np2" maxlength="6" placeholder="••••••" inputmode="numeric"></div>
+      <button class="btn-ps" onclick="chgPin()">Update PIN</button>
+      <p id="pinmsg" style="margin-top:8px;font-size:0.8rem"></p>
+    </div>
+    <hr style="margin:22px 0;border:none;border-top:1px solid var(--border)">
+    <h4 style="font-family:var(--font-display);margin-bottom:12px">Site Statistics</h4>
+    <p style="font-size:0.875rem;color:var(--ink-muted);margin-bottom:4px">Total articles: <strong style="color:var(--ink)">${total}</strong></p>
+    <p style="font-size:0.875rem;color:var(--ink-muted);margin-bottom:4px">Published: <strong style="color:var(--ink)">${pub}</strong></p>
+    <p style="font-size:0.875rem;color:var(--ink-muted);margin-bottom:4px">Pending review: <strong style="color:var(--ink)">${pend}</strong></p>
+    <p style="font-size:0.875rem;color:var(--ink-muted)">Unique authors: <strong style="color:var(--ink)">${authors}</strong></p>`;
+  }
+}
+
+function revCard(a,isApp=false,isRej=false){
+  const dt=new Date(a.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  const badge=a.status==='approved'?'<span class="sbadge s-approved">Published</span>':a.status==='rejected'?'<span class="sbadge s-rejected">Rejected</span>':'<span class="sbadge s-pending">Pending</span>';
+  const ex=a.content.replace(/<[^>]*>/g,'').slice(0,200);
+  const acts=a.status==='pending'
+    ?`<button class="btn-app" onclick="doReview('${a.id}','approved')">✅ Approve</button><button class="btn-rej" onclick="doReview('${a.id}','rejected')">❌ Reject</button><button class="btn-prev" onclick="prvArt('${a.id}')">👁 Preview</button>`
+    :a.status==='approved'
+    ?`<button class="btn-rej" onclick="doReview('${a.id}','rejected')" style="background:var(--ink-muted)">Unpublish</button><button class="btn-prev" onclick="prvArt('${a.id}')">👁 View</button>`
+    :`<button class="btn-app" onclick="doReview('${a.id}','approved')">✅ Approve</button><button class="btn-prev" onclick="prvArt('${a.id}')">👁 Preview</button>`;
+  return `<div class="rev-card"><div class="rev-hdr"><div class="rev-title">${esc(a.title)}</div>${badge}</div><div class="rev-meta">By ${esc(a.author.name)} · ${esc(a.category)} · ${dt}</div><div class="rev-excerpt">${esc(ex)}…</div><div class="rev-acts">${acts}</div></div>`;
+}
+
+async function doReview(id,st){
+  const i=ARTS.findIndex(a=>a.id===id);if(i<0)return;
+  ARTS[i].status=st;
+  if(st==='approved')ARTS[i].publishedAt=Date.now();
+  await put('iw_arts',ARTS);
+  renderAdminPanel();
+  toast(st==='approved'?'✅ Article published!':'❌ Article rejected.');
+  renderArticles();
+}
+function prvArt(id){close$('admin-modal');openArt(id);}
+
+async function adminPub(){
+  const t=(document.getElementById('aw-t').value||'').trim();
+  const body=(document.getElementById('aw-body').value||'').trim();
+  const cat=document.getElementById('aw-c').value;
+  if(!t||!body||!cat){toast('Fill in title, category, and content.');return;}
+  const html=body.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+  const art={
+    id:'adm_'+Date.now(),title:t,content:'<p>'+html+'</p>',
+    excerpt:body.replace(/<[^>]*>/g,'').slice(0,190)+'…',category:cat,
+    author:{name:'Inkwell Editor',email:'admin@inkwell.com',initials:'IE'},
+    status:'approved',createdAt:Date.now(),publishedAt:Date.now(),coverImage:null,
+    readTime:Math.max(1,Math.ceil(body.split(/\s+/).length/200)),
+    seoTitle:(document.getElementById('aw-st').value||'').trim()||t,
+    seoDesc:(document.getElementById('aw-sd').value||'').trim()||body.slice(0,160),
+    isAdmin:true
+  };
+  ARTS.unshift(art);await put('iw_arts',ARTS);
+  toast('Article published! ✨');renderArticles();setATab('approved');
+}
+
+async function chgPin(){
+  const n1=document.getElementById('np1').value,n2=document.getElementById('np2').value,msg=document.getElementById('pinmsg');
+  if(!/^\d{6}$/.test(n1)){msg.style.color='var(--error)';msg.textContent='PIN must be exactly 6 digits.';return;}
+  if(n1!==n2){msg.style.color='var(--error)';msg.textContent='PINs do not match.';return;}
+  PIN=n1;await put('iw_pin',PIN);
+  msg.style.color='var(--success)';msg.textContent='✅ PIN updated!';
+  document.getElementById('np1').value='';document.getElementById('np2').value='';
+}
+
+// ── MY ARTICLES ───────────────────────────────────────────
+function openMyArticles(){
+  if(!USER)return;
+  const mine=ARTS.filter(a=>a.author.email===USER.email);
+  const ws=getWeekStart();
+  const wc=mine.filter(a=>a.createdAt>=ws&&!a.isAdmin).length;
+  const list=document.getElementById('ma-list');
+  if(!mine.length){
+    list.innerHTML='<p style="text-align:center;color:var(--ink-muted);padding:28px">No articles yet. <button onclick="close$(\'ma-modal\');goWrite()" style="color:var(--amber);background:none;border:none;cursor:pointer;font-family:var(--font-body)">Start writing →</button></p>';
+  }else{
+    list.innerHTML=`<div class="alert alert-i" style="margin-bottom:14px">📅 This week: ${wc}/2 articles used</div>`+
+      mine.map(a=>`<div class="ma-item"><div><div class="ma-ttl">${esc(a.title)}</div><div class="ma-sub">${esc(a.category)} · ${new Date(a.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div></div><span class="sbadge s-${a.status}" style="flex-shrink:0;margin-left:12px">${a.status}</span></div>`).join('');
+  }
+  document.getElementById('ma-modal').classList.remove('hidden');
+}
+
+// ── UTILS ─────────────────────────────────────────────────
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.style.display='block';clearTimeout(window._tt);window._tt=setTimeout(()=>{el.style.display='none';},3200);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// Close overlay on background click
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.add('hidden');}));
+
+init();
+</script>
+</body>
+</html>
