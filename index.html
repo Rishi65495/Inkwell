@@ -526,7 +526,7 @@ function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 async function signInWithGoogle() {
   const { error } = await db.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.href }
+    options: { redirectTo: 'https://rishi65495.github.io/Article-sharing-website' }
   });
   if (error) toast('Sign in error: ' + error.message);
 }
