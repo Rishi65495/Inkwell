@@ -467,9 +467,7 @@ const TPLS = {
 async function init() {
 
   // 🔥 IMPORTANT: handle OAuth redirect properly
-if (window.location.hash.includes('access_token')) {
-  window.history.replaceState({}, document.title, window.location.pathname);
-}
+
   // STEP 1: Get session (after OAuth redirect)
   const { data, error } = await db.auth.getSession();
 
