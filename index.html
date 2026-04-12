@@ -11,7 +11,81 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    :root{--cream:#FAF7F2;--cream-dark:#F0EAE0;--ink:#1A1208;--ink-light:#3D3525;--ink-muted:#8A7D6D;--amber:#C4783A;--amber-light:#E8A96A;--amber-pale:#FDF3E7;--terracotta:#B85C38;--border:#DDD4C5;--error:#C0392B;--success:#27AE60;--font-display:'Playfair Display',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--font-article:'Lora',Georgia,serif;--shadow-sm:0 1px 3px rgba(26,18,8,.07);--shadow-lg:0 12px 40px rgba(26,18,8,.14);--radius:8px;--radius-lg:16px;--t:.2s ease}
+    /* ── READING PROGRESS BAR ── */
+    #read-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--amber-light));width:0%;z-index:999;transition:width .1s linear;border-radius:0 3px 3px 0}
+    /* ── ANIMATED HERO PARTICLES ── */
+    .hero-particle{position:absolute;border-radius:50%;background:var(--amber);opacity:.08;animation:floatUp 6s ease-in-out infinite;pointer-events:none}
+    @keyframes floatUp{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-28px) scale(1.08)}}
+    /* ── NAV SCROLL SHADOW ── */
+    nav.scrolled{box-shadow:0 2px 20px rgba(26,18,8,.1)}
+    /* ── AVATAR PULSE ─ */
+    .avatar{transition:box-shadow .2s ease}
+    .avatar:hover{box-shadow:0 0 0 4px var(--amber-pale);cursor:pointer}
+    /* ── CARD SHINE ── */
+    .card{position:relative;overflow:hidden}
+    .card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.06) 0%,transparent 60%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+    .card:hover::after{opacity:1}
+    .card:hover .card-cover img{transform:scale(1.04);transition:transform .5s ease}
+    .card-cover img{transition:transform .5s ease}
+    /* ── SEARCH GLOW ── */
+    .search-inp:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(196,120,58,.12)}
+    /* ── ADMIN PROFILE IN DROPDOWN ── */
+    .admin-profile-card{margin:8px 10px 4px;background:linear-gradient(135deg,var(--ink) 0%,#2E2010 100%);border-radius:var(--radius);padding:14px;color:#fff}
+    .apc-row{display:flex;align-items:center;gap:10px}
+    .apc-av{width:38px;height:38px;border-radius:50%;background:var(--amber);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0}
+    .apc-name{font-weight:700;font-size:.88rem;color:#fff}
+    .apc-role{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:1px}
+    .apc-actions{display:flex;gap:6px;margin-top:10px}
+    .apc-btn{flex:1;padding:5px 0;border:1px solid rgba(255,255,255,.2);border-radius:5px;background:transparent;color:rgba(255,255,255,.8);font-family:var(--font-body);font-size:.75rem;font-weight:600;transition:var(--t);cursor:pointer}
+    .apc-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+    .apc-btn.apc-admin{background:var(--amber);border-color:var(--amber);color:#fff}
+    .apc-btn.apc-admin:hover{background:var(--terracotta)}
+    /* ── HERO STATS ── */
+    .hero-stats{display:flex;gap:28px;justify-content:center;margin-top:36px;position:relative}
+    .hero-stat{text-align:center}
+    .hero-stat-num{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--amber-light)}
+    .hero-stat-lbl{font-size:.75rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.6px}
+    /* ── SECTION HEADER ── */
+    .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+    .section-title{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--ink)}
+    .section-count{font-size:.82rem;color:var(--ink-muted);background:var(--cream-dark);padding:3px 10px;border-radius:40px}
+    /* ── LIKE BUTTON ── */
+    .like-btn{background:none;border:1px solid var(--border);border-radius:40px;padding:4px 10px;font-size:.75rem;color:var(--ink-muted);display:flex;align-items:center;gap:4px;transition:var(--t)}
+    .like-btn:hover,.like-btn.liked{background:var(--amber-pale);border-color:var(--amber-light);color:var(--amber)}
+    .like-btn.liked .like-heart{animation:heartPop .3s ease}
+    @keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+    /* ── ENHANCED TOAST ── */
+    #toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:.85rem;z-index:500;box-shadow:var(--shadow-lg);display:none;max-width:320px;display:flex;align-items:center;gap:10px;transform:translateY(12px);opacity:0;transition:transform .22s ease,opacity .22s ease}
+    #toast.show{transform:translateY(0);opacity:1;display:flex}
+    #toast.t-success{border-left:3px solid var(--success)}
+    #toast.t-error{border-left:3px solid var(--error)}
+    #toast.t-info{border-left:3px solid var(--amber)}
+    /* ── FEATURED ARTICLE STRIP ── */
+    .featured-strip{background:linear-gradient(135deg,var(--ink) 0%,#2D1F0A 100%);border-radius:var(--radius-lg);padding:28px;margin-bottom:32px;display:flex;gap:24px;align-items:center;cursor:pointer;transition:var(--t);overflow:hidden;position:relative}
+    .featured-strip:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+    .featured-strip::before{content:'FEATURED';position:absolute;top:14px;left:14px;font-size:.65rem;font-weight:700;letter-spacing:1.2px;color:var(--amber-light);opacity:.7}
+    .fs-body{flex:1;min-width:0}
+    .fs-cat{font-size:.72rem;font-weight:700;color:var(--amber-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+    .fs-title{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:#fff;line-height:1.25;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .fs-excerpt{font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:12px}
+    .fs-meta{font-size:.78rem;color:rgba(255,255,255,.45)}
+    .fs-cover{width:180px;height:130px;border-radius:var(--radius);object-fit:cover;flex-shrink:0}
+    .fs-cover-icon{width:130px;height:130px;border-radius:var(--radius);background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:3rem;flex-shrink:0}
+    /* ── WRITE PAGE UX ── */
+    .write-header{padding:18px 0 14px;border-bottom:1px solid var(--border);margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+    .write-header h2{font-family:var(--font-display);font-size:1.1rem;color:var(--ink-muted)}
+    .char-count{font-size:.72rem;color:var(--ink-muted);text-align:right;margin-top:3px}
+    /* ── VIEW TRANSITION ── */
+    .view.active{animation:viewIn .25s ease both}
+    @keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    /* ── SCROLL TO TOP ── */
+    #scroll-top{position:fixed;bottom:22px;left:22px;width:38px;height:38px;border-radius:50%;background:var(--ink);color:#fff;border:none;font-size:1rem;display:none;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);transition:var(--t);z-index:400}
+    #scroll-top:hover{background:var(--amber);transform:translateY(-2px)}
+    #scroll-top.visible{display:flex}
+    /* ── MOBILE NAV WRITE BTN ── */
+    .nav-write-mobile{display:none}
+    @media(max-width:600px){.nav-write-mobile{display:block}.nav-write-desktop{display:none}}
+    :root{--cream:#FAF7F2;--cream-dark:#F0EAE0;--ink:#1A1208;--ink-light:#3D3525;--ink-muted:#8A7D6D;--amber:#C4783A;--amber-light:#E8A96A;--amber-pale:#FDF3E7;--terracotta:#B85C38;--border:#DDD4C5;--error:#C0392B;--success:#27AE60;--font-display:'Playfair Display',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--font-article:'Lora',Georgia,serif;--shadow-sm:0 1px 3px rgba(26,18,8,.07);--shadow-md:0 4px 16px rgba(26,18,8,.10);--shadow-lg:0 12px 40px rgba(26,18,8,.14);--radius:8px;--radius-lg:16px;--t:.2s ease}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
     body{font-family:var(--font-body);background:var(--cream);color:var(--ink);line-height:1.6;min-height:100vh}
     ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--cream-dark)}::-webkit-scrollbar-thumb{background:var(--amber-light);border-radius:3px}
@@ -154,13 +228,18 @@
     .alert{padding:10px 16px;border-radius:var(--radius);font-size:.85rem;margin-bottom:13px}
     .alert-i{background:#E8F4FD;color:#1A6BA0;border:1px solid #BDE0F5}
     .alert-w{background:#FFF8E6;color:#856404;border:1px solid #FDEAB3}
-    #toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:#fff;padding:11px 18px;border-radius:var(--radius);font-size:.85rem;z-index:500;box-shadow:var(--shadow-lg);display:none;max-width:310px}
     .x-btn{background:none;border:none;font-size:1.1rem;color:inherit;opacity:.7;line-height:1}.x-btn:hover{opacity:1}
-    @media(max-width:760px){#view-write.active{flex-direction:column}.write-side{width:100%;position:static}.grid{grid-template-columns:1fr}nav{padding:0 14px}.hero{padding:52px 14px}.home-body,#view-article,#view-write{padding:28px 14px}}
+    @media(max-width:760px){#view-write.active{flex-direction:column}.write-side{width:100%;position:static}.grid{grid-template-columns:1fr}nav{padding:0 14px}.hero{padding:52px 14px}.home-body,#view-article,#view-write{padding:28px 14px}.featured-strip{flex-direction:column}.fs-cover,.fs-cover-icon{width:100%;height:140px}.hero-stats{gap:18px}}
   </style>
 </head>
 <body>
-<div class="loading-screen" id="loading-screen"><div class="loading-brand">Ink<span>well</span></div><div class="spinner"></div></div>
+<div id="read-progress"></div>
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+<div class="loading-screen" id="loading-screen">
+  <div class="loading-brand">Ink<span>well</span></div>
+  <div class="spinner"></div>
+  <p style="font-size:.82rem;color:var(--ink-muted);margin-top:4px">Loading your stories…</p>
+</div>
 <nav>
   <div class="nav-brand" onclick="showView('home')">Ink<span>well</span></div>
   <div class="nav-right">
@@ -170,16 +249,29 @@
       <button class="nbtn nbtn-amber" onclick="goWrite()">Write ✍️</button>
     </span>
     <span id="nav-user" style="display:none">
+      <button class="nbtn nbtn-amber nav-write-desktop" onclick="goWrite()" style="margin-right:4px">✍️ Write</button>
       <div class="user-menu" id="user-menu">
         <div class="avatar" id="av-icon" onclick="toggleUserDrop(event)">?</div>
         <div class="user-drop" id="user-drop">
-          <div class="drop-name" id="drop-name"></div>
+          <!-- Admin profile card — visible to ALL logged-in users -->
+          <div class="admin-profile-card" id="admin-profile-card">
+            <div class="apc-row">
+              <div class="apc-av" id="apc-av-icon">A</div>
+              <div>
+                <div class="apc-name" id="apc-admin-name">Inkwell Admin</div>
+                <div class="apc-role">🛡️ Platform Administrator</div>
+              </div>
+            </div>
+            <div class="apc-actions">
+              <button class="apc-btn" onclick="closeUserDrop();showView('home')">Explore</button>
+              <button class="apc-btn apc-admin" onclick="closeUserDrop();openAdmin()">⚙️ Admin Panel</button>
+            </div>
+          </div>
+          <div class="drop-div"></div>
+          <div style="padding:6px 15px 4px;font-size:.72rem;color:var(--ink-muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px" id="drop-name"></div>
           <div class="drop-item" onclick="closeUserDrop();showView('home')">🏠 Explore</div>
           <div class="drop-item" onclick="closeUserDrop();goWrite()">✍️ Write Article</div>
           <div class="drop-item" onclick="closeUserDrop();openMyArticles()">📄 My Articles</div>
-          <div class="drop-div"></div>
-          <div class="drop-item" onclick="closeUserDrop();openAdmin()">⚙️ Admin Panel</div>
-          <div class="drop-div"></div>
           <div class="drop-item" onclick="closeUserDrop();openNotifications()">🔔 Notifications <span id="notif-badge" style="display:none;background:var(--error);color:#fff;border-radius:40px;font-size:.65rem;padding:1px 6px;margin-left:4px"></span></div>
           <div class="drop-div"></div>
           <div class="drop-item" onclick="closeUserDrop();doLogout()" style="color:var(--error)">🚪 Sign Out</div>
@@ -191,16 +283,33 @@
 
 <!-- HOME -->
 <div class="view active" id="view-home">
-  <div class="hero">
+  <div class="hero" id="hero">
+    <!-- Floating particles -->
+    <div class="hero-particle" style="width:90px;height:90px;top:10%;left:8%;animation-delay:0s"></div>
+    <div class="hero-particle" style="width:50px;height:50px;top:60%;left:4%;animation-delay:1.5s"></div>
+    <div class="hero-particle" style="width:70px;height:70px;top:20%;right:10%;animation-delay:2.8s"></div>
+    <div class="hero-particle" style="width:40px;height:40px;top:70%;right:6%;animation-delay:.8s"></div>
+    <div class="hero-particle" style="width:110px;height:110px;bottom:5%;left:40%;animation-delay:3.5s"></div>
     <h1 class="hero-title">Where Words<br><em>Find Home</em></h1>
-    <p class="hero-sub">A curated space for thinkers, storytellers &amp; creators.</p>
+    <p class="hero-sub">A curated space for thinkers, storytellers &amp; creators. Publish your ideas to the world.</p>
     <div class="hero-btns">
-      <button class="btn-hero-p" onclick="goWrite()">Start Writing</button>
-      <button class="btn-hero-s" onclick="document.getElementById('art-sec').scrollIntoView({behavior:'smooth'})">Read Stories</button>
+      <button class="btn-hero-p" onclick="goWrite()">Start Writing ✍️</button>
+      <button class="btn-hero-s" onclick="document.getElementById('art-sec').scrollIntoView({behavior:'smooth'})">Explore Stories</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num" id="stat-articles">0</div><div class="hero-stat-lbl">Articles</div></div>
+      <div class="hero-stat"><div class="hero-stat-num" id="stat-writers">0</div><div class="hero-stat-lbl">Writers</div></div>
+      <div class="hero-stat"><div class="hero-stat-num" id="stat-cats">18</div><div class="hero-stat-lbl">Topics</div></div>
     </div>
   </div>
   <div class="home-body" id="art-sec">
-    <input type="text" class="search-inp" id="search-inp" placeholder="🔍  Search articles, authors..." oninput="renderArticles()">
+    <!-- Featured article strip -->
+    <div id="featured-wrap"></div>
+    <div class="section-hdr">
+      <span class="section-title">📢 Latest Stories</span>
+      <span class="section-count" id="art-count">0 articles</span>
+    </div>
+    <input type="text" class="search-inp" id="search-inp" placeholder="🔍  Search articles, authors, topics..." oninput="renderArticles()">
     <div class="cat-bar">
       <button class="cat-btn on" onclick="setCat(this,'all')">All</button>
       <button class="cat-btn" onclick="setCat(this,'Technology')">💻 Technology</button>
@@ -390,7 +499,7 @@ async function init(){
   updateNavUI();
   db.auth.onAuthStateChange(async(event,session)=>{
     SESS=session;
-    if(session){await loadUserRow();closeModal('auth-modal');toast(`Welcome, ${USER_ROW?.name||'Writer'}! 🎉`);}
+    if(session){await loadUserRow();closeModal('auth-modal');toast(`Welcome back, ${USER_ROW?.name||'Writer'}! 🎉`,'success');}
     else USER_ROW=null;
     updateNavUI();
   });
@@ -407,6 +516,28 @@ async function init(){
   document.addEventListener('click', e=>{
     const menu=document.getElementById('user-menu');
     if(menu && !menu.contains(e.target)) closeUserDrop();
+  });
+  // Reading progress + scroll-to-top + nav shadow
+  window.addEventListener('scroll',()=>{
+    const el=document.getElementById('view-article');
+    if(el && el.classList.contains('active')){
+      const art=el.querySelector('.art-body');
+      if(art){
+        const rect=art.getBoundingClientRect();
+        const total=art.offsetHeight;
+        const read=Math.min(Math.max(-rect.top/(total-window.innerHeight)*100,0),100);
+        const rp=document.getElementById('read-progress');
+        if(rp) rp.style.width=read+'%';
+      }
+    } else {
+      const rp=document.getElementById('read-progress');
+      if(rp) rp.style.width='0%';
+    }
+    // Scroll-to-top visibility
+    const st=document.getElementById('scroll-top');
+    if(st) st.classList.toggle('visible',window.scrollY>400);
+    // Nav shadow
+    document.querySelector('nav').classList.toggle('scrolled',window.scrollY>10);
   });
 }
 
@@ -488,7 +619,44 @@ async function fetchAdminPin(){
 async function fetchArticles(){
   const {data,error}=await db.from('articles').select('*').eq('status','approved').order('published_at',{ascending:false});
   if(!error) ARTS=data||[];
+  // Update hero stats
+  const uniqueWriters=new Set((ARTS).map(a=>a.author_id)).size;
+  const sA=document.getElementById('stat-articles');
+  const sW=document.getElementById('stat-writers');
+  if(sA) animateCount(sA,ARTS.length);
+  if(sW) animateCount(sW,uniqueWriters);
+  // Article count badge
+  const ac=document.getElementById('art-count');
+  if(ac) ac.textContent=`${ARTS.length} article${ARTS.length===1?'':'s'}`;
+  renderFeatured();
   renderArticles();
+}
+
+function animateCount(el,target){
+  let cur=0;const step=Math.ceil(target/20);
+  const iv=setInterval(()=>{
+    cur=Math.min(cur+step,target);
+    el.textContent=cur;
+    if(cur>=target)clearInterval(iv);
+  },40);
+}
+
+function renderFeatured(){
+  const wrap=document.getElementById('featured-wrap');
+  if(!wrap||!ARTS.length) return;
+  const a=ARTS[0];
+  const em=CATS[a.category]||'📄';
+  const fmt=new Date(a.published_at||a.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  const img=a.cover_url?`<img src="${a.cover_url}" class="fs-cover" alt="" loading="lazy">`:`<div class="fs-cover-icon">${em}</div>`;
+  wrap.innerHTML=`<div class="featured-strip" onclick="openArt('${a.id}')">
+    <div class="fs-body">
+      <div class="fs-cat">${em} ${esc(a.category)}</div>
+      <div class="fs-title">${esc(a.title)}</div>
+      <div class="fs-excerpt">${esc(a.excerpt||'')}</div>
+      <div class="fs-meta">By ${esc(a.author_name||'Unknown')} &bull; ${fmt} &bull; ${a.read_time} min read</div>
+    </div>
+    ${img}
+  </div>`;
 }
 
 // ─── AUTH ─────────────────────────────────
@@ -546,6 +714,12 @@ function updateNavUI(){
     a.style.display='none';u.style.display='inline-flex';
     document.getElementById('drop-name').textContent=USER_ROW.name;
     document.getElementById('av-icon').textContent=USER_ROW.initials||'?';
+    // Populate admin profile card — always shows admin identity
+    // We display the current user's initials as a placeholder; admin name comes from settings
+    const apc=document.getElementById('apc-av-icon');
+    const apn=document.getElementById('apc-admin-name');
+    if(apc) apc.textContent='IW'; // Inkwell initials
+    if(apn) apn.textContent='Inkwell Admin';
   } else {
     a.style.display='inline-flex';u.style.display='none';
   }
@@ -566,13 +740,20 @@ function renderArticles(){
   const grid=document.getElementById('art-grid');
   const q=(document.getElementById('search-inp')?.value||'').toLowerCase();
   let list=[...ARTS];
+  // Skip index 0 — shown as featured
+  if(list.length>1) list=list.slice(1);
   if(ACTIVE_CAT!=='all') list=list.filter(a=>a.category===ACTIVE_CAT);
   if(q) list=list.filter(a=>a.title.toLowerCase().includes(q)||(a.excerpt||'').toLowerCase().includes(q)||(a.author_name||'').toLowerCase().includes(q));
+  // Update count
+  const ac=document.getElementById('art-count');
+  if(ac&&!q&&ACTIVE_CAT==='all') ac.textContent=`${ARTS.length} article${ARTS.length===1?'':'s'}`;
   if(!list.length){grid.innerHTML='<div class="empty"><div class="empty-icon">✍️</div><h3>No articles here yet</h3><p>Be the first to write something wonderful.</p></div>';return;}
   const fmt=ts=>new Date(ts).toLocaleDateString('en-IN',{month:'short',day:'numeric',year:'numeric'});
+  const liked=JSON.parse(localStorage.getItem('iw_liked')||'{}');
   grid.innerHTML=list.map((a,i)=>{
     const em=CATS[a.category]||'📄';
     const cov=a.cover_url?`<img src="${a.cover_url}" alt="" loading="lazy">`:`<div style="font-size:2.4rem">${em}</div>`;
+    const isLiked=!!liked[a.id];
     return `<div class="card" style="animation-delay:${i*.05}s" onclick="openArt('${a.id}')">
       <div class="card-cover">${cov}</div>
       <div class="card-body">
@@ -581,11 +762,32 @@ function renderArticles(){
         <div class="card-excerpt">${esc(a.excerpt||'')}</div>
         <div class="card-foot">
           <div class="card-author"><div class="mini-av">${esc(a.author_initials||'?')}</div><span>${esc(a.author_name||'')}</span></div>
-          <span>${a.read_time}m · ${fmt(a.published_at||a.created_at)}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span>${a.read_time}m · ${fmt(a.published_at||a.created_at)}</span>
+            <button class="like-btn${isLiked?' liked':''}" onclick="toggleLike(event,'${a.id}')" title="Like"><span class="like-heart">♥️</span> <span id="lc-${a.id}">${(a.likes||0)}</span></button>
+          </div>
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+function toggleLike(e,id){
+  e.stopPropagation();
+  const liked=JSON.parse(localStorage.getItem('iw_liked')||'{}');
+  const btn=e.currentTarget;
+  const countEl=document.getElementById('lc-'+id);
+  let cur=parseInt(countEl?.textContent||'0',10);
+  if(liked[id]){
+    delete liked[id];
+    btn.classList.remove('liked');
+    if(countEl) countEl.textContent=Math.max(0,cur-1);
+  } else {
+    liked[id]=1;
+    btn.classList.add('liked');
+    if(countEl) countEl.textContent=cur+1;
+  }
+  localStorage.setItem('iw_liked',JSON.stringify(liked));
 }
 
 async function openArt(id){
@@ -942,11 +1144,25 @@ async function openMyArticles(){
 }
 
 // ─── UTILS ────────────────────────────────
-function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.style.display='block';clearTimeout(window._tt);window._tt=setTimeout(()=>el.style.display='none',3400);}
+function toast(msg,type='info'){
+  const el=document.getElementById('toast');
+  if(!el) return;
+  el.textContent=msg;
+  el.className=`t-${type} show`;
+  el.style.display='flex';
+  clearTimeout(window._tt);
+  window._tt=setTimeout(()=>{
+    el.classList.remove('show');
+    setTimeout(()=>el.style.display='none',220);
+  },3400);
+}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.add('hidden');}));
-document.addEventListener('keydown',e=>{if(e.key==='Enter'){const m=document.getElementById('auth-modal');if(m&&!m.classList.contains('hidden'))doAuth();}});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.overlay:not(.hidden)').forEach(o=>o.classList.add('hidden'));
+  if(e.key==='Enter'){const m=document.getElementById('auth-modal');if(m&&!m.classList.contains('hidden'))doAuth();}
+});
 
 init();
 </script>
