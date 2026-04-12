@@ -25,8 +25,8 @@
     .nbtn-amber{background:var(--amber);color:#fff}.nbtn-amber:hover{background:var(--terracotta)}
     .avatar{width:34px;height:34px;border-radius:50%;background:var(--amber);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;border:2px solid var(--border);user-select:none}
     .user-menu{position:relative}
-    .user-drop{position:absolute;top:44px;right:0;background:white;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);min-width:200px;padding:6px 0;display:none;z-index:200}
-    .user-menu:hover .user-drop{display:block}
+    .user-drop{position:absolute;top:50px;right:0;background:white;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);min-width:210px;padding:6px 0;display:none;z-index:200;opacity:0;transform:translateY(-6px);transition:opacity .18s ease,transform .18s ease}
+    .user-drop.open{display:block;opacity:1;transform:translateY(0)}
     .drop-item{padding:9px 15px;font-size:.85rem;color:var(--ink-light);display:flex;align-items:center;gap:8px;transition:var(--t)}.drop-item:hover{background:var(--cream)}
     .drop-div{height:1px;background:var(--border);margin:4px 0}
     .drop-name{padding:10px 15px 6px;font-size:.78rem;color:var(--ink-muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
@@ -135,6 +135,14 @@
     .btn-prev{padding:6px 14px;background:transparent;color:var(--ink);border:1px solid var(--border);border-radius:5px;font-family:var(--font-body);font-size:.78rem;transition:var(--t)}.btn-prev:hover{background:var(--cream-dark)}
     .sbadge{padding:2px 9px;border-radius:40px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
     .s-pending{background:#FFF3CD;color:#856404}.s-approved{background:#D4EDDA;color:#155724}.s-rejected{background:#F8D7DA;color:#721C24}
+    .notif-banner{position:fixed;top:70px;right:18px;background:#fff;border:1px solid var(--border);border-left:4px solid var(--error);border-radius:var(--radius);padding:13px 16px;max-width:320px;box-shadow:var(--shadow-lg);z-index:400;animation:mIn .2s ease}
+    .notif-banner.success-notif{border-left-color:var(--success)}
+    .notif-title{font-weight:700;font-size:.88rem;margin-bottom:3px}
+    .notif-msg{font-size:.82rem;color:var(--ink-muted)}
+    .submit-success-box{text-align:center;padding:28px 20px}
+    .submit-success-box .big-icon{font-size:3rem;margin-bottom:12px}
+    .submit-success-box h3{font-family:var(--font-display);font-size:1.3rem;margin-bottom:8px;color:var(--ink)}
+    .submit-success-box p{font-size:.88rem;color:var(--ink-muted);line-height:1.6}
     .adm-wf input,.adm-wf select,.adm-wf textarea{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:5px;font-family:var(--font-body);font-size:.85rem;margin-bottom:9px;outline:none;background:white}
     .adm-wf textarea{min-height:160px;resize:vertical}
     .btn-ps{padding:9px 22px;background:var(--amber);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:.875rem;font-weight:600;transition:var(--t)}.btn-ps:hover{background:var(--terracotta)}
@@ -162,17 +170,19 @@
       <button class="nbtn nbtn-amber" onclick="goWrite()">Write ✍️</button>
     </span>
     <span id="nav-user" style="display:none">
-      <div class="user-menu">
-        <div class="avatar" id="av-icon">?</div>
-        <div class="user-drop">
+      <div class="user-menu" id="user-menu">
+        <div class="avatar" id="av-icon" onclick="toggleUserDrop(event)">?</div>
+        <div class="user-drop" id="user-drop">
           <div class="drop-name" id="drop-name"></div>
-          <div class="drop-item" onclick="showView('home')">🏠 Explore</div>
-          <div class="drop-item" onclick="goWrite()">✍️ Write Article</div>
-          <div class="drop-item" onclick="openMyArticles()">📄 My Articles</div>
+          <div class="drop-item" onclick="closeUserDrop();showView('home')">🏠 Explore</div>
+          <div class="drop-item" onclick="closeUserDrop();goWrite()">✍️ Write Article</div>
+          <div class="drop-item" onclick="closeUserDrop();openMyArticles()">📄 My Articles</div>
           <div class="drop-div"></div>
-          <div class="drop-item" onclick="openAdmin()">⚙️ Admin Panel</div>
+          <div class="drop-item" onclick="closeUserDrop();openAdmin()">⚙️ Admin Panel</div>
           <div class="drop-div"></div>
-          <div class="drop-item" onclick="doLogout()" style="color:var(--error)">🚪 Sign Out</div>
+          <div class="drop-item" onclick="closeUserDrop();openNotifications()">🔔 Notifications <span id="notif-badge" style="display:none;background:var(--error);color:#fff;border-radius:40px;font-size:.65rem;padding:1px 6px;margin-left:4px"></span></div>
+          <div class="drop-div"></div>
+          <div class="drop-item" onclick="closeUserDrop();doLogout()" style="color:var(--error)">🚪 Sign Out</div>
         </div>
       </div>
     </span>
@@ -203,6 +213,12 @@
       <button class="cat-btn" onclick="setCat(this,'Health')">💚 Health</button>
       <button class="cat-btn" onclick="setCat(this,'Travel')">🌍 Travel</button>
       <button class="cat-btn" onclick="setCat(this,'Education')">🎓 Education</button>
+      <button class="cat-btn" onclick="setCat(this,'Business')">💼 Business</button>
+      <button class="cat-btn" onclick="setCat(this,'Food')">🍽 Food</button>
+      <button class="cat-btn" onclick="setCat(this,'Sports')">⚽ Sports</button>
+      <button class="cat-btn" onclick="setCat(this,'Music')">🎵 Music</button>
+      <button class="cat-btn" onclick="setCat(this,'Art')">🎨 Art</button>
+      <button class="cat-btn" onclick="setCat(this,'Finance')">📈 Finance</button>
     </div>
     <div class="grid" id="art-grid"><div class="empty"><div class="spinner" style="margin:0 auto"></div></div></div>
   </div>
@@ -251,7 +267,7 @@
     <div class="scard"><h4>📁 Category</h4>
       <select class="s-select" id="w-cat">
         <option value="">— Choose category —</option>
-        <option>Technology</option><option>Culture</option><option>Science</option><option>Opinion</option><option>Lifestyle</option><option>Literature</option><option>Politics</option><option>Health</option><option>Travel</option><option>Education</option>
+        <option>Technology</option><option>Culture</option><option>Science</option><option>Opinion</option><option>Lifestyle</option><option>Literature</option><option>Politics</option><option>Health</option><option>Travel</option><option>Education</option><option>Business</option><option>Food</option><option>Sports</option><option>Music</option><option>Art</option><option>Philosophy</option><option>Environment</option><option>Finance</option>
       </select>
     </div>
     <div class="scard"><h4>🖼 Cover Image</h4>
@@ -314,6 +330,33 @@
     <div id="ma-list"></div>
   </div>
 </div>
+
+<!-- NOTIFICATIONS MODAL -->
+<div class="overlay hidden" id="notif-modal">
+  <div class="mbox" style="max-width:520px;width:95%">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <h2 style="font-family:var(--font-display);font-size:1.25rem">🔔 Notifications</h2>
+      <button class="x-btn" onclick="closeModal('notif-modal')" style="color:var(--ink)">✕</button>
+    </div>
+    <div id="notif-list"></div>
+  </div>
+</div>
+
+<!-- SUBMIT SUCCESS MODAL -->
+<div class="overlay hidden" id="success-modal">
+  <div class="mbox" style="max-width:420px;width:93%">
+    <div class="submit-success-box">
+      <div class="big-icon">🎉</div>
+      <h3>Article Submitted!</h3>
+      <p>Thank you for your contribution, <strong id="success-author-name"></strong>! Your article is under review and will be published within <strong>1–2 hours</strong>. We'll notify you once it's live.</p>
+      <div style="margin-top:22px;padding:14px;background:var(--amber-pale);border-radius:var(--radius);font-size:.84rem;color:var(--ink-light)">
+        💡 Articles not reviewed within 2 hours are <strong>automatically published</strong>.
+      </div>
+      <button onclick="closeModal('success-modal')" style="margin-top:22px;padding:10px 28px;background:var(--amber);color:#fff;border:none;border-radius:40px;font-family:var(--font-body);font-size:.9rem;font-weight:600">Got it, thanks! ✨</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -330,7 +373,7 @@ let SESS=null,USER_ROW=null,ARTS=[],ACTIVE_CAT='all';
 let ADMIN_AUTH=false,ATAB='pending',ADMIN_PIN='123456';
 let COVER_FILE=null,EDIT_ID=null,AUTH_MODE='login';
 
-const CATS={Technology:'💻',Culture:'🎭',Science:'🔬',Opinion:'💬',Lifestyle:'✨',Literature:'📚',Politics:'🏛',Health:'💚',Travel:'🌍',Education:'🎓'};
+const CATS={Technology:'💻',Culture:'🎭',Science:'🔬',Opinion:'💬',Lifestyle:'✨',Literature:'📚',Politics:'🏛',Health:'💚',Travel:'🌍',Education:'🎓',Business:'💼',Food:'🍽',Sports:'⚽',Music:'🎵',Art:'🎨',Philosophy:'🧠',Environment:'🌿',Finance:'📈'};
 const TPLS={
   essay:{title:'Essay Title',html:'<h2>Introduction</h2><p>Begin with a compelling hook.</p><h2>Body — Part I</h2><p>Develop your first major argument here.</p><h2>Conclusion</h2><p>Return to your opening idea with greater depth.</p>'},
   howto:{title:'How to [Do Something]',html:'<h2>Overview</h2><p>Briefly explain what you\'ll teach.</p><h2>Step 1</h2><p>Clear, actionable instructions.</p><h2>Step 2</h2><p>Build on the previous step.</p><h2>Tips</h2><p>Common mistakes and how to avoid them.</p>'},
@@ -353,9 +396,78 @@ async function init(){
   });
   await fetchAdminPin();
   await fetchArticles();
+  await autoPublishOverdue();
   document.getElementById('loading-screen').classList.add('hidden');
   document.getElementById('nav-auth').style.display='inline-flex';
-  if(SESS) document.getElementById('nav-auth').style.display='none';
+  if(SESS){
+    document.getElementById('nav-auth').style.display='none';
+    checkNotifications();
+  }
+  // Close dropdown when clicking outside
+  document.addEventListener('click', e=>{
+    const menu=document.getElementById('user-menu');
+    if(menu && !menu.contains(e.target)) closeUserDrop();
+  });
+}
+
+// ─── NAV DROPDOWN ─────────────────────────
+function toggleUserDrop(e){
+  e.stopPropagation();
+  const drop=document.getElementById('user-drop');
+  if(drop.classList.contains('open')) closeUserDrop();
+  else { drop.style.display='block'; requestAnimationFrame(()=>drop.classList.add('open')); }
+}
+function closeUserDrop(){
+  const drop=document.getElementById('user-drop');
+  if(!drop) return;
+  drop.classList.remove('open');
+  setTimeout(()=>{ if(!drop.classList.contains('open')) drop.style.display='none'; },180);
+}
+
+// ─── AUTO-PUBLISH OVERDUE ─────────────────
+async function autoPublishOverdue(){
+  try{
+    const twoHrsAgo=new Date(Date.now()-2*60*60*1000).toISOString();
+    const {data:overdue}=await db.from('articles').select('id').eq('status','pending').lt('created_at',twoHrsAgo);
+    if(overdue&&overdue.length){
+      const ids=overdue.map(a=>a.id);
+      await db.from('articles').update({status:'approved',published_at:new Date().toISOString()}).in('id',ids);
+    }
+  }catch(e){console.warn('Auto-publish check failed',e);}
+}
+
+// ─── NOTIFICATIONS ────────────────────────
+async function checkNotifications(){
+  if(!USER_ROW) return;
+  try{
+    const {data,error}=await db.from('notifications').select('*').eq('user_id',USER_ROW.id).eq('read',false);
+    if(error||!data||!data.length) return;
+    const badge=document.getElementById('notif-badge');
+    if(badge){badge.textContent=data.length;badge.style.display='inline';}
+  }catch(e){}
+}
+async function openNotifications(){
+  if(!USER_ROW) return;
+  const {data:notifs}=await db.from('notifications').select('*').eq('user_id',USER_ROW.id).order('created_at',{ascending:false});
+  const list=document.getElementById('notif-list');
+  if(!notifs||!notifs.length){
+    list.innerHTML='<p style="text-align:center;color:var(--ink-muted);padding:28px">No notifications yet.</p>';
+  } else {
+    list.innerHTML=notifs.map(n=>{
+      const icon=n.type==='rejected'?'❌':n.type==='approved'?'✅':'📌';
+      const bg=n.read?'var(--cream)':'var(--amber-pale)';
+      return `<div style="padding:13px 15px;background:${bg};border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px">
+        <div style="font-weight:600;font-size:.88rem">${icon} ${esc(n.title)}</div>
+        <div style="font-size:.82rem;color:var(--ink-muted);margin-top:3px">${esc(n.message)}</div>
+        <div style="font-size:.74rem;color:var(--ink-muted);margin-top:4px">${new Date(n.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>`;
+    }).join('');
+    // Mark all read
+    await db.from('notifications').update({read:true}).eq('user_id',USER_ROW.id);
+    const badge=document.getElementById('notif-badge');
+    if(badge) badge.style.display='none';
+  }
+  document.getElementById('notif-modal').classList.remove('hidden');
 }
 
 async function loadUserRow(){
@@ -556,11 +668,14 @@ async function goWrite(){
   EDIT_ID=null;
   document.getElementById('edit-notice').style.display='none';
   document.getElementById('pub-btn').textContent='Submit for Review';
-  const weekStart=getWeekStart();
-  const {count}=await db.from('articles').select('*',{count:'exact',head:true}).eq('author_id',USER_ROW.id).eq('is_admin',false).gte('created_at',weekStart);
-  const pa=document.getElementById('pub-alert'),btn=document.getElementById('pub-btn');
-  if(count>=2){pa.innerHTML='<div class="alert alert-w">⚠️ Weekly limit reached (2/2). Come back next week!</div>';btn.disabled=true;}
-  else{pa.innerHTML=`<div class="alert alert-i">📅 ${count}/2 articles used this week</div>`;btn.disabled=false;}
+  document.getElementById('pub-btn').disabled=false;
+  const pa=document.getElementById('pub-alert');
+  try{
+    const weekStart=getWeekStart();
+    const {count}=await db.from('articles').select('*',{count:'exact',head:true}).eq('author_id',USER_ROW.id).eq('is_admin',false).gte('created_at',weekStart);
+    if(count>=2){pa.innerHTML='<div class="alert alert-w">⚠️ Weekly limit reached (2/2). Come back next week!</div>';document.getElementById('pub-btn').disabled=true;}
+    else{pa.innerHTML=`<div class="alert alert-i">📅 ${count}/2 articles used this week. Articles are reviewed within 1–2 hours.</div>`;}
+  }catch(e){pa.innerHTML='<div class="alert alert-i">📝 Write your article and submit for review.</div>';}
   const dk='iw_draft_'+USER_ROW.id;
   const draft=JSON.parse(localStorage.getItem(dk)||'{}');
   document.getElementById('w-title').value=draft.title||'';
@@ -642,20 +757,34 @@ async function submitArticle(){
     const {error}=await db.from('articles').update({title,content:html,excerpt,category:cat,status:'pending',published_at:null,cover_url:coverUrl||existing.cover_url||null,seo_title:seoT,seo_desc:seoD,read_time:rt}).eq('id',EDIT_ID);
     if(error){toast('Update failed: '+error.message);btn.disabled=false;btn.textContent='Update Article';return;}
     toast('✅ Article updated and sent for re-review!');
+    EDIT_ID=null;
+    document.getElementById('edit-notice').style.display='none';
+    document.getElementById('w-title').value='';document.getElementById('editor').innerHTML='';
+    document.getElementById('cover-prev').style.display='none';COVER_FILE=null;
+    btn.disabled=false;btn.textContent='Submit for Review';
+    showView('home');
   } else {
-    const {data:limitOk}=await db.rpc('check_weekly_limit',{uid:USER_ROW.id});
-    if(!limitOk){toast('2 articles/week limit reached.');btn.disabled=false;btn.textContent='Submit for Review';return;}
+    // Inline weekly limit check — no broken RPC
+    const weekStart=getWeekStart();
+    const {count}=await db.from('articles').select('*',{count:'exact',head:true})
+      .eq('author_id',USER_ROW.id).eq('is_admin',false).gte('created_at',weekStart);
+    if(count>=2){
+      toast('⚠️ Weekly limit reached (2/2). Come back next week!');
+      btn.disabled=false;btn.textContent='Submit for Review';return;
+    }
     const {error}=await db.from('articles').insert({title,content:html,excerpt,category:cat,status:'pending',author_id:USER_ROW.id,author_name:USER_ROW.name,author_initials:USER_ROW.initials,cover_url:coverUrl,seo_title:seoT,seo_desc:seoD,read_time:rt,is_admin:false});
     if(error){toast('Submit failed: '+error.message);btn.disabled=false;btn.textContent='Submit for Review';return;}
     localStorage.removeItem('iw_draft_'+USER_ROW.id);
-    toast('✅ Submitted for review!');
+    document.getElementById('w-title').value='';document.getElementById('editor').innerHTML='';
+    document.getElementById('w-cat').value='';
+    document.getElementById('cover-prev').style.display='none';COVER_FILE=null;
+    btn.disabled=false;btn.textContent='Submit for Review';
+    showView('home');
+    // Show success modal
+    document.getElementById('success-author-name').textContent=USER_ROW?.name||'Writer';
+    document.getElementById('success-modal').classList.remove('hidden');
+    await fetchArticles();
   }
-  EDIT_ID=null;
-  document.getElementById('edit-notice').style.display='none';
-  document.getElementById('w-title').value='';document.getElementById('editor').innerHTML='';
-  document.getElementById('cover-prev').style.display='none';COVER_FILE=null;
-  btn.disabled=false;btn.textContent='Submit for Review';
-  showView('home');
 }
 
 // ─── ADMIN ────────────────────────────────
@@ -666,19 +795,26 @@ function renderAdminBdy(){
     bdy.innerHTML=`<div style="text-align:center;padding:18px 0 26px">
       <p style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:6px">Admin PIN</p>
       <p style="color:var(--ink-muted);font-size:.84rem;margin-bottom:22px">Enter your 6-digit PIN to access the panel.</p>
-      <div class="pin-row">${[0,1,2,3,4,5].map(i=>`<input type="password" maxlength="1" class="pin-d" id="pd${i}" oninput="pNext(${i})" onkeydown="pBack(event,${i})" inputmode="numeric">`).join('')}</div>
+      <div class="pin-row"><input type="password" maxlength="6" class="pin-d" id="pin-full" placeholder="••••••" inputmode="numeric" style="width:160px;letter-spacing:8px;font-size:1.6rem" onkeydown="if(event.key==='Enter')verifyPin()"></div>
       <p id="perr" style="color:var(--error);font-size:.82rem;min-height:18px;margin-bottom:10px"></p>
-      <button onclick="verifyPin()" style="padding:9px 30px;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:.9rem">Unlock</button>
+      <button onclick="verifyPin()" style="padding:10px 34px;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:.9rem;font-weight:600">Unlock →</button>
     </div>`;
-    setTimeout(()=>document.getElementById('pd0')?.focus(),80);
+    setTimeout(()=>document.getElementById('pin-full')?.focus(),80);
   } else renderAdminPanel();
 }
-function pNext(i){const v=document.getElementById('pd'+i).value;if(v&&i<5)document.getElementById('pd'+(i+1)).focus();if(i===5&&v)verifyPin();}
-function pBack(e,i){if(e.key==='Backspace'&&!document.getElementById('pd'+i).value&&i>0)document.getElementById('pd'+(i-1)).focus();}
+function pNext(i){} // legacy stub
+function pBack(e,i){} // legacy stub
 function verifyPin(){
-  const entered=[0,1,2,3,4,5].map(i=>(document.getElementById('pd'+i)?.value||'')).join('');
-  if(entered===ADMIN_PIN){ADMIN_AUTH=true;renderAdminBdy();}
-  else{document.getElementById('perr').textContent='Incorrect PIN.';[0,1,2,3,4,5].forEach(i=>{const el=document.getElementById('pd'+i);if(el)el.value='';});document.getElementById('pd0')?.focus();}
+  const entered=(document.getElementById('pin-full')?.value||'').trim();
+  if(entered===String(ADMIN_PIN).trim()){
+    ADMIN_AUTH=true;
+    renderAdminBdy();
+  } else {
+    const perr=document.getElementById('perr');
+    if(perr) perr.textContent='Incorrect PIN. Try again.';
+    const inp=document.getElementById('pin-full');
+    if(inp){inp.value='';inp.focus();inp.style.borderColor='var(--error)';setTimeout(()=>inp.style.borderColor='',1200);}
+  }
 }
 async function renderAdminPanel(){
   const [{data:pending},{data:approved},{data:rejected},{count:totalUsers}]=await Promise.all([
@@ -738,10 +874,22 @@ function revCard(a){
   return `<div class="rev-card"><div class="rev-hdr"><div class="rev-title">${esc(a.title)}</div>${badge}</div><div class="rev-meta">By ${esc(a.author_name||'Unknown')} · ${esc(a.category||'')} · ${dt}</div><div class="rev-excerpt">${esc(ex)}…</div><div class="rev-acts">${acts}</div></div>`;
 }
 async function doReview(id,status){
-  const updates={status};if(status==='approved')updates.published_at=new Date().toISOString();
+  const updates={status};
+  if(status==='approved') updates.published_at=new Date().toISOString();
+  // Get article info first for notification
+  const {data:art}=await db.from('articles').select('author_id,title').eq('id',id).single();
   const {error}=await db.from('articles').update(updates).eq('id',id);
   if(error){toast('Error: '+error.message);return;}
-  toast(status==='approved'?'✅ Article published!':'Article status updated.');
+  // Send notification to writer if rejected or approved
+  if(art && art.author_id && (status==='rejected'||status==='approved')){
+    try{
+      const notifData=status==='rejected'
+        ?{user_id:art.author_id,type:'rejected',title:'Article Rejected',message:`Your article "${art.title}" was not approved. Please review and resubmit.`,read:false}
+        :{user_id:art.author_id,type:'approved',title:'Article Published! 🎉',message:`Your article "${art.title}" is now live on Inkwell.`,read:false};
+      await db.from('notifications').insert(notifData);
+    }catch(e){console.warn('Notification failed',e);}
+  }
+  toast(status==='approved'?'✅ Article published!':status==='rejected'?'❌ Article rejected & writer notified.':'Article status updated.');
   await fetchArticles();renderAdminPanel();
 }
 async function prvArt(id){
