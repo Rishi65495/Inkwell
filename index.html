@@ -1616,20 +1616,66 @@ function compressAndProcess(file, type, callback) {
       const canvas = document.createElement('canvas');
       let w = img.width;
       let h = img.height;
-      const maxDim = type === 'avatar' ? 500 : 1600;
-      if (w > maxDim || h > maxDim) {
-        if (w > h) {
-          h = Math.round((h * maxDim) / w);
-          w = maxDim;
-        } else {
-          w = Math.round((w * maxDim) / h);
-          h = maxDim;
-        }
-      }
-      canvas.width = w;
-      canvas.height = h;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
+      
+      if (type === 'cover') {
+        // Auto center crop to 16:9 aspect ratio
+        const targetAspect = 16 / 9;
+        let sourceX = 0;
+        let sourceY = 0;
+        let sourceWidth = w;
+        let sourceHeight = h;
+        
+        if (w / h > targetAspect) {
+          // Too wide: crop left/right sides
+          sourceWidth = h * targetAspect;
+          sourceX = (w - sourceWidth) / 2;
+        } else {
+          // Too tall: crop top/bottom sides
+          sourceHeight = w / targetAspect;
+          sourceY = (h - sourceHeight) / 2;
+        }
+        
+        const maxDim = 1600;
+        let destWidth = sourceWidth;
+        let destHeight = sourceHeight;
+        if (destWidth > maxDim) {
+          destWidth = maxDim;
+          destHeight = Math.round(maxDim / targetAspect);
+        }
+        
+        canvas.width = destWidth;
+        canvas.height = destHeight;
+        ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, destWidth, destHeight);
+      } else if (type === 'avatar') {
+        // Auto center crop to 1:1 square
+        const size = Math.min(w, h);
+        const sourceX = (w - size) / 2;
+        const sourceY = (h - size) / 2;
+        
+        const maxDim = 500;
+        const destSize = Math.min(size, maxDim);
+        
+        canvas.width = destSize;
+        canvas.height = destSize;
+        ctx.drawImage(img, sourceX, sourceY, size, size, 0, 0, destSize, destSize);
+      } else {
+        // Inline images: keep original aspect ratio
+        const maxDim = 1600;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        ctx.drawImage(img, 0, 0, w, h);
+      }
+      
       canvas.toBlob(blob => {
         blob.name = file.name;
         callback(blob);
