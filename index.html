@@ -443,9 +443,6 @@ footer::before{content:'';position:absolute;inset:0;background:radial-gradient(e
   .art-meta{gap:10px}
   .mb{padding:16px!important;max-height:95vh!important;width:100%!important;margin:0!important;border-radius:12px!important}
 }
-
-/* ── CROP MODAL ── */
-#crop-modal .mb{max-width:640px;text-align:center}
 </style>
 </head>
 <body>
@@ -473,7 +470,7 @@ footer::before{content:'';position:absolute;inset:0;background:radial-gradient(e
   <div class="nav-r">
     <button class="nb desk" onclick="showView('home')">Home</button>
     <button class="nb desk" onclick="showView('explore')">Explore</button>
-    <button class="nb desk" onclick="showView('home'); setCat(document.querySelector('.cat'),\'foryou\')">For You</button>
+    <button class="nb desk" onclick="showView('home'); setCat(document.querySelector('.cat'),'foryou')">For You</button>
     <span id="nav-auth" class="desk" style="display:inline-flex;gap:8px">
       <button class="nb nb-ghost" onclick="openLogin()">Sign In</button>
       <button class="nb nb-a" onclick="goWrite()">✦ Write</button>
@@ -821,22 +818,6 @@ footer::before{content:'';position:absolute;inset:0;background:radial-gradient(e
   </div>
 </div>
 
-<!-- ══ CROP MODAL ══ -->
-<div class="ov h" id="crop-modal" style="z-index:99999">
-  <div class="mb" style="max-width:640px;text-align:center">
-    <button class="xb" onclick="closeModal('crop-modal')">✕</button>
-    <h2 style="font-family:var(--f1);margin-bottom:16px;font-size:1.4rem">✂️ Crop & <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Insert</span></h2>
-    <div style="width:100%;max-height:50vh;margin-bottom:18px;background:var(--bg3);overflow:hidden;border-radius:var(--r);border:1px solid var(--border2)">
-      <img id="crop-img" style="max-width:100%;max-height:50vh;display:block;margin:auto">
-    </div>
-    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      <button class="nb nb-ghost" onclick="closeModal('crop-modal')" style="padding:10px 20px">Cancel</button>
-      <button class="nb nb-ghost" id="crop-skip-btn" style="padding:10px 20px;color:var(--accent2);border-color:var(--accent)">Use Original</button>
-      <button class="btn-submit" id="crop-submit-btn" style="width:auto;padding:10px 24px">Crop & Insert</button>
-    </div>
-  </div>
-</div>
-
 <!-- ══ FOOTER ══ -->
 <footer>
   <div>
@@ -893,7 +874,7 @@ const TPLS={
   howto:{title:'How to [Do Something]',html:'<h2>Overview</h2><p>What you\'ll learn and why it matters.</p><h2>Step 1</h2><p>Clear, actionable instructions.</p><h2>Step 2</h2><p>Build on the previous step.</p><h2>Tips & Pitfalls</h2><p>Common mistakes to avoid.</p>'},
   story:{title:'A Story About [Subject]',html:'<h2>Setting the Scene</h2><p>Place the reader in your world.</p><h2>The Journey</h2><p>What happened, step by step.</p><h2>The Lesson</h2><p>What it all means.</p>'},
   opinion:{title:'Why [Your Position]',html:'<h2>My Stance</h2><p>State your view clearly and boldly.</p><h2>The Case</h2><p>Arguments supporting your position.</p><h2>The Other Side</h2><p>Counterpoints, addressed fairly.</p><h2>Final Thought</h2><p>Your conviction, restated with conviction.</p>'},
-  review:{title:'[Title] — A Review',html:'<h2>At a Glance</h2><p>Quick summary for the impatient reader.</p><h2>Strengths</h2><p>What works brilliantly.</p><h2>Weaknesses</h2><p>Where it falls short.</p><h2>Verdict</h2><p>Who should read/watch/try this?</p>'}
+  review:{title:'[Title] — A Review',html:'<h2>At a Glance</h2><p>Quick summary for the stagnant reader.</p><h2>Strengths</h2><p>What works brilliantly.</p><h2>Weaknesses</h2><p>Where it falls short.</p><h2>Verdict</h2><p>Who should read/watch/try this?</p>'}
 };
 
 /* ── INIT ── */
@@ -1661,46 +1642,19 @@ function compressAndProcess(file, type, callback) {
 
 function handleImageCrop(inp,type){
   if(!inp.files||!inp.files[0])return;
-  const file=inp.files[0];const r=new FileReader();
-  r.onload=e=>{
-    const cImg=document.getElementById('crop-img');cImg.src=e.target.result;
-    document.getElementById('crop-modal').classList.remove('h');
-    if(CROPPER)CROPPER.destroy();CROP_TYPE=type;
-    const asp=type==='cover'?16/9:type==='avatar'?1:NaN;
-    CROPPER=new Cropper(cImg,{
-      aspectRatio:asp,
-      viewMode:1,
-      responsive:true,
-      restore:true,
-      guides:true,
-      center:true,
-      highlight:false,
-      cropBoxMovable:true,
-      cropBoxResizable:true,
-      toggleDragModeOnDblclick:false
-    });
-    document.getElementById('crop-submit-btn').onclick=()=>{
-      const btn=document.getElementById('crop-submit-btn');btn.disabled=true;btn.textContent='Processing…';
-      CROPPER.getCroppedCanvas({maxWidth:type==='avatar'?500:1600}).toBlob(blob=>{
-        blob.name=file.name;
-        if(CROP_TYPE==='cover'){
-          uploadCover(blob);
-        }
-        else if(CROP_TYPE==='avatar'){uploadAvatar(blob);}
-        else{uploadAndInsertInline(blob);}
-      },'image/jpeg',type==='avatar'?0.7:0.82);
-    };
-    document.getElementById('crop-skip-btn').onclick=()=>{
-      const btn=document.getElementById('crop-skip-btn');btn.disabled=true;btn.textContent='Processing…';
-      compressAndProcess(file, CROP_TYPE, blob => {
-        if(CROP_TYPE==='cover'){
-          uploadCover(blob);
-        }
-        else if(CROP_TYPE==='avatar'){uploadAvatar(blob);}
-        else{uploadAndInsertInline(blob);}
-      });
-    };
-  };r.readAsDataURL(file);inp.value='';
+  const file=inp.files[0];
+  compressAndProcess(file, type, blob => {
+    if(type==='cover'){
+      uploadCover(blob);
+    }
+    else if(type==='avatar'){
+      uploadAvatar(blob);
+    }
+    else{
+      uploadAndInsertInline(blob);
+    }
+  });
+  inp.value='';
 }
 
 async function uploadAndInsertInline(blob){
@@ -1723,10 +1677,8 @@ async function uploadAndInsertInline(blob){
       });
     }
     document.getElementById('editor').focus();document.execCommand('insertImage',false,publicUrl);
-    toast('Image inserted! ✨');closeModal('crop-modal');
+    toast('Image inserted! ✨');
   }catch(e){toast('Upload failed: '+e.message)}
-  const btn=document.getElementById('crop-submit-btn');btn.disabled=false;btn.textContent='Crop & Insert';
-  const skipBtn=document.getElementById('crop-skip-btn');skipBtn.disabled=false;skipBtn.textContent='Use Original';
 }
 
 async function uploadAvatar(blob){
@@ -1754,18 +1706,10 @@ async function uploadAvatar(blob){
     document.getElementById('profile-av-img').style.display='block';
     AVATARS[USER_ROW.id]=publicUrl;updateNavUI();toast('Profile picture updated! ✨');
   }catch(e){toast('Error: '+e.message)}
-  closeModal('crop-modal');
-  const btn=document.getElementById('crop-submit-btn');btn.disabled=false;btn.textContent='Crop & Insert';
-  const skipBtn=document.getElementById('crop-skip-btn');skipBtn.disabled=false;skipBtn.textContent='Use Original';
 }
 
 async function uploadCover(blob){
   toast('Uploading cover image…');
-  const btnSubmit = document.getElementById('crop-submit-btn');
-  const btnSkip = document.getElementById('crop-skip-btn');
-  if (btnSubmit) btnSubmit.disabled = true;
-  if (btnSkip) btnSkip.disabled = true;
-  
   try{
     const path=`covers/${Date.now()}_${(blob.name||'cover').replace(/\s/g,'_')}`;
     let publicUrl;
@@ -1792,12 +1736,9 @@ async function uploadCover(blob){
       p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
     toast('Cover image uploaded successfully! 📷');
-    closeModal('crop-modal');
   }catch(e){
     toast('Cover upload failed: '+e.message);
   }
-  if (btnSubmit) { btnSubmit.disabled=false; btnSubmit.textContent='Crop & Insert'; }
-  if (btnSkip) { btnSkip.disabled=false; btnSkip.textContent='Use Original'; }
 }
 
 function insertInlineImg(inp){handleImageCrop(inp,'inline')}
