@@ -6,8 +6,9 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://lqkbfvtwcdgwqmabyjnk.supabase.co wss://lqkbfvtwcdgwqmabyjnk.supabase.co https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net data: blob:; img-src 'self' data: blob: https://lqkbfvtwcdgwqmabyjnk.supabase.co;">
 <title>Inkwell — Where Words Find Home</title>
 <meta name="description" content="A beautiful writing platform for thinkers, storytellers, and creators.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='logo-grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236366F1'/%3E%3Cstop offset='100%25' stop-color='%23A855F7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23logo-grad)'/%3E%3Cpath d='M65 30c-2-2-5-2-7 0L35 53l-3 10 10-3 23-23c2-2 2-5 0-7z' fill='%23ffffff'/%3E%3Cpath d='M30 65h10v10H30V65z' fill='%23ffffff' opacity='0.8'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=Outfit:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -434,9 +435,792 @@ footer::before{content:'';position:absolute;inset:0;background:radial-gradient(e
 .follow-user-item:hover{background:rgba(124,58,237,0.04);padding-left:4px;border-radius:var(--r)}
 .follow-user-item:last-child{border-bottom:none}
 
-/* ── RESPONSIVE ── */
+/* ── MODAL RESPONSIVENESS AND TEXTURE FIXES ── */
+.mb {
+  width: 95%;
+  max-width: 520px;
+}
+.mb-lg {
+  width: 95%;
+  max-width: 860px;
+}
+@media (max-width: 960px) {
+  .write-layout-container {
+    flex-direction: column !important;
+  }
+  #standard-sidebar, .w-side {
+    width: 100% !important;
+  }
+  #book-sidebar {
+    width: 100% !important;
+    position: relative !important;
+    top: 0 !important;
+    max-height: none !important;
+    margin-bottom: 20px;
+  }
+}
+@media (max-width: 768px) {
+  #reader-sidebar {
+    width: 100% !important;
+    position: relative !important;
+    top: 0 !important;
+    margin-bottom: 20px;
+  }
+}
+
+/* ── BRAND LOGO VECTORS ── */
+.brand-logo-container {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.brand-logo-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.4));
+}
+
+/* ── ONBOARDING INSPIRATION BANNER ── */
+.onboarding-card {
+  background: var(--glass);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 40px;
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.5s ease both;
+}
+.onboarding-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.onboarding-sparkle {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--accent2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: var(--r3);
+  margin-bottom: 16px;
+}
+.onboarding-card h3 {
+  font-family: var(--f1);
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+  color: var(--fg);
+}
+.onboarding-card p {
+  color: var(--fg3);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin-bottom: 24px;
+}
+.onboarding-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.prompt-box {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeUp 0.3s ease;
+}
+.prompt-text {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--fg2);
+  line-height: 1.4;
+  padding-right: 12px;
+}
+.prompt-next {
+  background: none;
+  border: none;
+  color: var(--accent2);
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--t);
+}
+.prompt-next:hover {
+  color: var(--accent);
+}
+
+/* ── COVER IMAGE LAYOUT CONFIGURATION ── */
+.cover-shape-rounded {
+  border-radius: var(--r2) !important;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+}
+.cover-shape-circle {
+  border-radius: 50% !important;
+  aspect-ratio: 1/1 !important;
+  object-fit: cover !important;
+  max-width: 240px !important;
+  width: 240px !important;
+  height: 240px !important;
+  margin: 0 auto 24px !important;
+  display: block !important;
+  box-shadow: var(--shadow);
+}
+.cover-shape-square {
+  border-radius: 0 !important;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+}
+.cover-shape-glow {
+  border-radius: var(--r2) !important;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  box-shadow: 0 15px 45px rgba(99,102,241,0.35) !important;
+}
+
+.art-cover.pos-top {
+  width: 100%;
+  max-height: 480px;
+  margin-bottom: 32px;
+}
+.art-cover.pos-floatleft {
+  float: left;
+  margin: 0 28px 24px 0 !important;
+  max-width: 32% !important;
+  width: 100%;
+}
+.art-cover.pos-floatright {
+  float: right;
+  margin: 0 0 24px 28px !important;
+  max-width: 32% !important;
+  width: 100%;
+}
+.art-split-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  align-items: flex-start;
+  margin-top: 24px;
+}
+.art-left-col {
+  position: sticky;
+  top: 90px;
+}
+@media (max-width: 860px) {
+  .art-split-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .art-left-col {
+    position: relative;
+    top: 0;
+    display: flex;
+    justify-content: center;
+  }
+  .art-cover.pos-floatleft, .art-cover.pos-floatright {
+    float: none !important;
+    max-width: 100% !important;
+    margin: 0 auto 20px !important;
+    display: block;
+  }
+}
+
+/* ── READING BACKGROUND TEXTURES ── */
+.paper-selector-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  padding: 8px 16px;
+  background: var(--glass2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  backdrop-filter: blur(10px);
+}
+.paper-selector-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--fg3);
+}
+.paper-btn {
+  padding: 6px 12px;
+  border-radius: var(--r3);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg2);
+  transition: all var(--t);
+  cursor: pointer;
+}
+.paper-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent2);
+}
+.paper-btn.active {
+  background: var(--grad);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+}
+
+.art-body-container {
+  transition: all 0.4s ease;
+  border-radius: var(--r2);
+  padding: 2px;
+}
+.art-body-container.paper-wood,
+.art-body-container.paper-paper,
+.art-body-container.paper-parchment,
+.art-body-container.paper-linen {
+  padding: 32px;
+}
+
+/* Wood texture */
+.paper-wood {
+  background-color: #24140e !important;
+  color: #eed9c4 !important;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.02) 0%, transparent 80%),
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.1) 0px, rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 10px) !important;
+  border: 1px solid #140a06 !important;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.6), var(--shadow2) !important;
+}
+.paper-wood h2, .paper-wood h3, .paper-wood strong {
+  color: #ffffff !important;
+}
+.paper-wood a {
+  color: #f97316 !important;
+  border-color: rgba(249,115,22,0.4) !important;
+}
+.paper-wood blockquote {
+  background: rgba(0,0,0,0.3) !important;
+  border-left-color: #f97316 !important;
+}
+
+/* Paper texture */
+.paper-paper {
+  background-color: #fbfbfa !important;
+  color: #1a1a1a !important;
+  background-image: 
+    linear-gradient(90deg, rgba(220, 220, 220, 0.2) 0%, transparent 10%),
+    linear-gradient(0deg, rgba(220, 220, 220, 0.2) 0%, transparent 10%) !important;
+  background-size: 24px 24px !important;
+  border: 1px solid #e1e1db !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), inset 0 0 20px rgba(0,0,0,0.01) !important;
+}
+.paper-paper h2, .paper-paper h3, .paper-paper strong {
+  color: #000000 !important;
+}
+.paper-paper a {
+  color: #2563eb !important;
+  border-color: rgba(37,99,235,0.4) !important;
+}
+.paper-paper blockquote {
+  background: #f1f5f9 !important;
+  border-left-color: #2563eb !important;
+  color: #475569 !important;
+}
+
+/* Parchment texture */
+.paper-parchment {
+  background-color: #f3edd9 !important;
+  color: #382c1a !important;
+  background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.4) 0%, rgba(235, 218, 185, 0.8) 100%) !important;
+  border: 1px solid #dfcca0 !important;
+  box-shadow: inset 0 0 30px rgba(180, 140, 90, 0.18), 0 8px 24px rgba(0,0,0,0.06) !important;
+}
+.paper-parchment h2, .paper-parchment h3, .paper-parchment strong {
+  color: #5c3b12 !important;
+}
+.paper-parchment a {
+  color: #b45309 !important;
+  border-color: rgba(180,83,9,0.4) !important;
+}
+.paper-parchment blockquote {
+  background: rgba(220,200,160,0.2) !important;
+  border-left-color: #b45309 !important;
+  color: #4a3e2e !important;
+}
+
+/* Linen texture */
+.paper-linen {
+  background-color: #eae1d8 !important;
+  color: #3a3229 !important;
+  background-image: 
+    linear-gradient(90deg, rgba(255, 255, 255, 0.25) 50%, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.25) 50%, transparent 50%) !important;
+  background-size: 5px 5px !important;
+  border: 1px solid #dacfc4 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), inset 0 0 10px rgba(0,0,0,0.03) !important;
+}
+.paper-linen h2, .paper-linen h3, .paper-linen strong {
+  color: #1a1612 !important;
+}
+.paper-linen a {
+  color: #0d9488 !important;
+  border-color: rgba(13,148,136,0.4) !important;
+}
+.paper-linen blockquote {
+  background: rgba(255,255,255,0.4) !important;
+  border-left-color: #0d9488 !important;
+  color: #4a443e !important;
+}
+
+/* ── MULTI-INTERFACE DESIGN OVERRIDES ── */
+
+/* 1. EDITORIAL PRO MODE */
+body.mode-professional {
+  background: #f8f9fa !important;
+  color: #111111 !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+body.mode-professional #main-nav {
+  background: #ffffff !important;
+  border-bottom: 2px solid #e5e7eb !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+body.mode-professional .brand-txt {
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  color: #0f172a !important;
+}
+body.mode-professional .brand-icon {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+body.mode-professional .bg-orbs, 
+body.mode-professional .orb {
+  display: none !important;
+}
+body.mode-professional .hero {
+  padding: 60px 20px 40px !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+body.mode-professional .hero-pill {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border-color: #cbd5e1 !important;
+}
+body.mode-professional .hero-t .line1 {
+  color: #0f172a !important;
+}
+body.mode-professional .hero-t .line2 {
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  color: #475569 !important;
+  font-family: var(--f1) !important;
+}
+body.mode-professional .hero-s {
+  color: #475569 !important;
+}
+body.mode-professional .nb-a {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+body.mode-professional .nb-a:hover {
+  background: #1e293b !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+body.mode-professional .nb-ghost {
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+body.mode-professional .nb-ghost:hover {
+  border-color: #0f172a !important;
+  color: #0f172a !important;
+  background: #f8f9fa !important;
+}
+body.mode-professional footer {
+  background: #ffffff !important;
+  border-top: 1px solid #e5e7eb !important;
+  color: #334155 !important;
+}
+body.mode-professional footer::before {
+  display: none !important;
+}
+body.mode-professional .ft-brand-txt {
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  color: #0f172a !important;
+}
+body.mode-professional .ft-brand-icon {
+  background: #0f172a !important;
+  box-shadow: none !important;
+}
+body.mode-professional .ft-sup {
+  background: #0f172a !important;
+  box-shadow: none !important;
+}
+body.mode-professional .sec-t span {
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  color: #0f172a !important;
+}
+body.mode-professional input, 
+body.mode-professional select, 
+body.mode-professional textarea {
+  background: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+body.mode-professional .grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0px !important;
+  border-top: 1px solid #e5e7eb !important;
+}
+body.mode-professional .grid .card {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  border-radius: 0 !important;
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 24px 0 !important;
+  gap: 24px !important;
+  box-shadow: none !important;
+}
+body.mode-professional .grid .card:hover {
+  transform: none !important;
+  background: rgba(0,0,0,0.01) !important;
+}
+body.mode-professional .grid .card-cover {
+  width: 140px !important;
+  height: 90px !important;
+  border-radius: 4px !important;
+  order: 2 !important;
+  flex-shrink: 0 !important;
+}
+body.mode-professional .grid .card-body {
+  padding: 0 !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+body.mode-professional .grid .card-title {
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  margin-bottom: 6px !important;
+  font-family: var(--f1) !important;
+  color: #111111 !important;
+  -webkit-line-clamp: 2 !important;
+}
+body.mode-professional .grid .card-ex {
+  font-size: 0.92rem !important;
+  color: #4b5563 !important;
+  line-height: 1.5 !important;
+  margin-bottom: 12px !important;
+  display: block !important;
+  -webkit-line-clamp: 2 !important;
+}
+body.mode-professional .grid .card-foot {
+  border: none !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+  background: transparent !important;
+  color: #6b7280 !important;
+}
+
+/* 2. AURA MINIMALIST MODE */
+body.mode-modern {
+  background: #050505 !important;
+  color: #f3f3f3 !important;
+  font-family: 'Inter', sans-serif !important;
+}
+body.mode-modern #main-nav {
+  display: none !important; /* Hidden in favor of floating dock */
+}
+body.mode-modern .bg-orbs,
+body.mode-modern .orb {
+  display: none !important;
+}
+
+/* Minimal topbar header for Modern Mode */
+.modern-header {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px clamp(16px, 4vw, 40px);
+  position: relative;
+  z-index: 100;
+}
+body.mode-modern .modern-header {
+  display: flex !important;
+}
+
+/* Noise and ambient glow styles */
+.noise {
+  position: fixed; inset: 0; z-index: 9999;
+  pointer-events: none; opacity: 0.035;
+  background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)"/%3E%3C/svg%3E');
+}
+.ambient-glow {
+  position: fixed; width: 80vw; height: 60vw;
+  border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%);
+  top: -30vw; left: 50%; transform: translateX(-50%);
+  pointer-events: none; z-index: 0;
+}
+
+/* Floating Dock styles */
+.dock-wrapper {
+  position: fixed; bottom: 32px; left: 0; width: 100%;
+  display: flex; justify-content: center; z-index: 1000;
+  pointer-events: none;
+}
+.dock {
+  background: rgba(15, 15, 17, 0.7);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  padding: 8px 12px;
+  display: flex; align-items: center; gap: 8px;
+  pointer-events: auto;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.dock-item {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #9999a1;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+.dock-item:hover { color: #f3f3f3; background: rgba(255,255,255,0.08); transform: translateY(-4px); }
+.dock-item.active { color: #f3f3f3; }
+.dock-item.active::after {
+  content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%; background: #f3f3f3;
+}
+.dock-item.primary { background: #f3f3f3; color: #050505; }
+.dock-item.primary:hover { transform: scale(1.1) translateY(-4px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+
+body.mode-modern .hero {
+  padding: 100px 0 60px !important;
+  text-align: center !important;
+}
+body.mode-modern .hero-pill {
+  background: rgba(255,255,255,0.05) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  color: #9999a1 !important;
+}
+body.mode-modern .hero-t {
+  font-family: 'Instrument Serif', serif !important;
+  font-size: clamp(3.5rem, 7vw, 6.5rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 0.95 !important;
+}
+body.mode-modern .hero-t .line1 {
+  color: #f3f3f3 !important;
+}
+body.mode-modern .hero-t .line2 {
+  font-style: italic !important;
+  color: #9999a1 !important;
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+}
+body.mode-modern .hero-s {
+  font-size: 1.1rem !important;
+  color: #9999a1 !important;
+  max-width: 440px !important;
+}
+body.mode-modern .nb-a {
+  background: #f3f3f3 !important;
+  color: #050505 !important;
+  box-shadow: none !important;
+  border-radius: 100px !important;
+}
+body.mode-modern .nb-a:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(255,255,255,0.15) !important;
+}
+body.mode-modern .nb-ghost {
+  border-color: rgba(255,255,255,0.15) !important;
+  color: #f3f3f3 !important;
+  border-radius: 100px !important;
+}
+body.mode-modern .nb-ghost:hover {
+  background: rgba(255,255,255,0.05) !important;
+  border-color: #f3f3f3 !important;
+}
+body.mode-modern .stat-n {
+  font-family: 'Instrument Serif', serif !important;
+  font-size: 2.5rem !important;
+  font-style: italic !important;
+  color: #f3f3f3 !important;
+}
+body.mode-modern .sec-t {
+  font-family: 'Instrument Serif', serif !important;
+  font-size: 2.2rem !important;
+  font-weight: 400 !important;
+}
+body.mode-modern .sec-t span {
+  font-style: italic !important;
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  color: #9999a1 !important;
+}
+body.mode-modern .card {
+  background: rgba(15,15,17,0.6) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+  border-radius: 16px !important;
+}
+body.mode-modern .card:hover {
+  border-color: rgba(255,255,255,0.2) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5) !important;
+}
+body.mode-modern .card-title {
+  font-family: 'Instrument Serif', serif !important;
+  font-size: 1.45rem !important;
+  line-height: 1.2 !important;
+  font-weight: 400 !important;
+}
+body.mode-modern .card-ex {
+  color: #9999a1 !important;
+}
+body.mode-modern footer {
+  background: #000000 !important;
+  border-top: 1px solid rgba(255,255,255,0.08) !important;
+}
+body.mode-modern footer::before {
+  display: none !important;
+}
+body.mode-modern .ft-brand-txt {
+  font-family: 'Instrument Serif', serif !important;
+  font-style: italic !important;
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  color: #f3f3f3 !important;
+}
+body.mode-modern .ft-brand-icon {
+  background: #f3f3f3 !important;
+  color: #050505 !important;
+  box-shadow: none !important;
+}
+body.mode-modern .ft-sup {
+  background: #f3f3f3 !important;
+  color: #050505 !important;
+  box-shadow: none !important;
+}
+
+/* Bento grid layout configuration on Modern Mode */
+body.mode-modern .grid {
+  display: grid !important;
+  grid-template-columns: repeat(12, 1fr) !important;
+  gap: 24px !important;
+}
+body.mode-modern .grid .card {
+  grid-column: span 4 !important;
+  min-height: 380px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+body.mode-modern .grid .card:nth-child(6n+1) {
+  grid-column: span 8 !important;
+}
+body.mode-modern .grid .card:nth-child(6n+2) {
+  grid-column: span 4 !important;
+}
+body.mode-modern .grid .card:nth-child(6n+3) {
+  grid-column: span 4 !important;
+}
+body.mode-modern .grid .card:nth-child(6n+4) {
+  grid-column: span 4 !important;
+}
+body.mode-modern .grid .card:nth-child(6n+5) {
+  grid-column: span 4 !important;
+}
+body.mode-modern .grid .card:nth-child(6n+6) {
+  grid-column: span 12 !important;
+  flex-direction: row !important;
+  min-height: 280px !important;
+}
+body.mode-modern .grid .card:nth-child(6n+6) .card-cover {
+  width: 40% !important;
+  height: 100% !important;
+}
+body.mode-modern .grid .card:nth-child(6n+6) .card-body {
+  width: 60% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+@media (max-width: 900px) {
+  body.mode-modern .grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+  }
+  body.mode-modern .grid .card {
+    grid-column: span 3 !important;
+  }
+  body.mode-modern .grid .card:nth-child(6n+1) {
+    grid-column: span 6 !important;
+  }
+  body.mode-modern .grid .card:nth-child(6n+6) {
+    grid-column: span 6 !important;
+    flex-direction: column !important;
+  }
+  body.mode-modern .grid .card:nth-child(6n+6) .card-cover,
+  body.mode-modern .grid .card:nth-child(6n+6) .card-body {
+    width: 100% !important;
+  }
+}
+
+/* ── RESPONSIVE BASE LAYOUT ── */
 @media(max-width:640px){
-  .grid{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr !important}
+  body.mode-modern .grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  body.mode-modern .grid .card {
+    grid-column: span 1 !important;
+  }
+  body.mode-modern .grid .card:nth-child(6n+1),
+  body.mode-modern .grid .card:nth-child(6n+6) {
+    grid-column: span 1 !important;
+    flex-direction: column !important;
+  }
+  body.mode-professional .grid .card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 16px 0 !important;
+  }
+  body.mode-professional .grid .card-cover {
+    width: 100% !important;
+    height: 180px !important;
+    order: 0 !important;
+  }
   .sec{padding:28px 16px}
   .hero{padding:56px 20px}
   .hero-stats{gap:20px}
@@ -461,16 +1245,57 @@ footer::before{content:'';position:absolute;inset:0;background:radial-gradient(e
 <div id="rprog"></div>
 <button id="stop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
 
+<!-- MINIMAL HEADER FOR MODERN MODE -->
+<header class="modern-header" id="modern-nav">
+  <div class="brand" onclick="showView('home')">
+    <div class="brand-logo-container">
+      <svg class="brand-logo-svg" viewBox="0 0 100 100">
+        <rect x="15" y="15" width="70" height="70" rx="20" fill="#f3f3f3" />
+        <path d="M65 30c-2-2-5-2-7 0L35 53l-3 10 10-3 23-23c2-2 2-5 0-7z" fill="#050505" />
+        <path d="M30 65h10v10H30V65z" fill="#050505" opacity="0.8" />
+      </svg>
+    </div>
+    <span class="brand-txt" style="font-family: var(--f1); font-size: 1.6rem; background: none; -webkit-text-fill-color: initial; color: #f3f3f3;">Aura</span>
+  </div>
+  
+  <div style="display:flex;align-items:center;gap:12px">
+    <select class="tb mode-selector-nav" onchange="changeInterfaceMode(this.value)" style="padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;color:#f3f3f3;cursor:pointer;outline:none;font-weight:600;font-size:0.8rem">
+      <option value="default">✨ Default Mode</option>
+      <option value="professional">👔 Editorial Pro</option>
+      <option value="modern">🌌 Aura Minimalist</option>
+    </select>
+  </div>
+</header>
+
 <!-- ══ NAV ══ -->
 <nav id="main-nav">
   <div class="brand" onclick="showView('home')">
-    <div class="brand-icon">✦</div>
+    <div class="brand-logo-container">
+      <svg class="brand-logo-svg" viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="logo-grad-nav" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6366F1" />
+            <stop offset="100%" stop-color="#A855F7" />
+          </linearGradient>
+        </defs>
+        <rect x="15" y="15" width="70" height="70" rx="20" fill="url(#logo-grad-nav)" />
+        <path d="M65 30c-2-2-5-2-7 0L35 53l-3 10 10-3 23-23c2-2 2-5 0-7z" fill="#ffffff" />
+        <path d="M30 65h10v10H30V65z" fill="#ffffff" opacity="0.8" />
+      </svg>
+    </div>
     <span class="brand-txt">Inkwell</span>
   </div>
   <div class="nav-r">
     <button class="nb desk" onclick="showView('home')">Home</button>
     <button class="nb desk" onclick="showView('explore')">Explore</button>
     <button class="nb desk" onclick="showView('home'); setCat(document.querySelector('.cat'),'foryou')">For You</button>
+    
+    <select id="interface-mode-select" class="tb desk" onchange="changeInterfaceMode(this.value)" style="padding:6px 12px;background:var(--glass2);border:1px solid var(--border2);border-radius:999px;color:var(--fg2);cursor:pointer;outline:none;font-weight:600;font-size:0.8rem;margin:0 4px">
+      <option value="default">✨ Default Mode</option>
+      <option value="professional">👔 Editorial Pro</option>
+      <option value="modern">🌌 Aura Minimalist</option>
+    </select>
+
     <span id="nav-auth" class="desk" style="display:inline-flex;gap:8px">
       <button class="nb nb-ghost" onclick="openLogin()">Sign In</button>
       <button class="nb nb-a" onclick="goWrite()">✦ Write</button>
@@ -499,6 +1324,15 @@ footer::before{content:'';position:absolute;inset:0;background:radial-gradient(e
   </div>
   <button class="d-btn" onclick="dGo('home')"><span class="d-icon">🏠</span>Home</button>
   <button class="d-btn" onclick="dGo('explore')"><span class="d-icon">🧭</span>Explore</button>
+  
+  <div class="d-sep"></div>
+  <div class="d-label">Interface Style</div>
+  <select id="interface-mode-select-drawer" class="tb" onchange="changeInterfaceMode(this.value)" style="margin:6px 14px 14px;width:calc(100% - 28px);background:var(--glass2);border:1px solid var(--border2);color:var(--fg2);font-weight:600">
+    <option value="default">✨ Default Mode</option>
+    <option value="professional">👔 Editorial Pro</option>
+    <option value="modern">🌌 Aura Minimalist</option>
+  </select>
+
   <div class="d-sep"></div>
   <div id="d-unauth">
     <button class="d-btn" onclick="toggleDrawer();openLogin()"><span class="d-icon">🔑</span>Sign In</button>
@@ -589,7 +1423,7 @@ footer::before{content:'';position:absolute;inset:0;background:radial-gradient(e
     <div id="pub-alert"></div>
     <!-- Spell check bar -->
     <div id="spell-bar" style="display:none" class="spell-hint"><span class="sh-icon">🔤</span><span>Spell-check active — browser underlines mistakes in red.</span><span id="spell-err-count" class="spell-err-count" style="display:none"></span></div>
-    <div style="display:flex;gap:24px;align-items:flex-start">
+    <div class="write-layout-container" style="display:flex;gap:24px;align-items:flex-start">
       <div id="book-sidebar" style="display:none">
         <h4 style="font-family:var(--f1);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;color:var(--fg)">Chapters <button onclick="addChap()" style="background:var(--grad);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button></h4>
         <div id="chap-list"></div>
@@ -633,6 +1467,9 @@ footer::before{content:'';position:absolute;inset:0;background:radial-gradient(e
           <label class="w-label">Cover Image</label>
           <label style="display:flex;align-items:center;gap:10px;padding:12px;border:1px dashed var(--border2);border-radius:var(--r);cursor:pointer;color:var(--fg3);font-size:.84rem;margin-bottom:12px;transition:all var(--t)" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)'">📷 Choose cover<input type="file" accept="image/*" style="display:none" onchange="handleCoverUpload(this)"></label>
           <img id="cover-prev" style="display:none;width:100%;border-radius:var(--r);margin-bottom:14px;box-shadow:var(--shadow)">
+          <div id="cover-config-controls" style="display:none;margin-bottom:14px;">
+            <button class="nb nb-ghost" style="width:100%;font-size:0.8rem;padding:6px 12px;margin-bottom:8px" onclick="openCoverConfigModal()">⚙️ Configure Layout & Crop</button>
+          </div>
           <label class="w-label">SEO Title</label>
           <input type="text" id="w-seo-t" placeholder="Optional" style="margin-bottom:10px">
           <label class="w-label">SEO Description</label>
@@ -843,6 +1680,88 @@ footer::before{content:'';position:absolute;inset:0;background:radial-gradient(e
   <p class="ft-copy">&copy; 2026 Inkwell Platform. Built with love for writers everywhere.</p>
 </footer>
 
+<!-- FLOATING BOTTOM DOCK (For Aura/Modern Mode) -->
+<div class="dock-wrapper" id="aura-dock" style="display:none">
+  <div class="dock">
+    <button class="dock-item" onclick="showView('home')" title="Home">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </button>
+    <button class="dock-item" onclick="showView('explore')" title="Explore">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-compass"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+    </button>
+    <button class="dock-item primary" onclick="goWrite()" title="Write">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-tool"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-1.5L4 21v3h3L18 13z"/><path d="M14.5 9.5 18 6l3 3-3.5 3.5-3-3z"/></svg>
+    </button>
+    <button class="dock-item" onclick="openNotifications()" title="Notifications" style="position:relative">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      <span id="dock-n-dot" style="position:absolute;top:8px;right:8px;width:8px;height:8px;background:var(--err);border-radius:50%;display:none"></span>
+    </button>
+    <button class="dock-item" onclick="openProfile()" title="Profile">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </button>
+    <button class="dock-item" onclick="toggleDrawer()" title="Menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ══ COVER CONFIG MODAL ══ -->
+<div class="ov h" id="cover-config-modal" style="z-index: 10000;">
+  <div class="mb mb-lg">
+    <button class="xb" onclick="closeModal('cover-config-modal')">✕</button>
+    <h2 style="font-family:var(--f1);margin-bottom:6px;font-size:1.5rem">📷 Configure Cover Image</h2>
+    <p style="color:var(--fg3);font-size:0.85rem;margin-bottom:20px">Crop your cover image or adjust how it is presented in the article.</p>
+    
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:flex-start" id="cover-config-grid">
+      <!-- Image Area for Cropper -->
+      <div style="width:100%;height:320px;background:var(--bg3);border-radius:var(--r);overflow:hidden;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;position:relative">
+        <img id="crop-target-img" style="max-width:100%;max-height:100%">
+      </div>
+      
+      <!-- Options Panel -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <label class="w-label">Position / Alignment</label>
+          <select id="cover-opt-pos" style="margin-bottom:10px">
+            <option value="top">Centered Top Banner</option>
+            <option value="leftcolumn">Left Sidebar Column</option>
+            <option value="floatleft">Float Left inside Text</option>
+            <option value="floatright">Float Right inside Text</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="w-label">Image Shape</label>
+          <select id="cover-opt-shape" style="margin-bottom:10px">
+            <option value="rounded">Rounded Corners (Default)</option>
+            <option value="circle">Circular (Portrait)</option>
+            <option value="square">Square</option>
+            <option value="glow">Soft Glow & Shadow</option>
+          </select>
+        </div>
+        
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn-submit" onclick="saveCoverConfig()" style="flex:1">Apply Settings</button>
+        </div>
+        <button class="btn-draft" onclick="triggerRecrop()" style="margin-top:0">✂️ Crop Image</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+#cover-config-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 280px !important;
+  gap: 24px;
+}
+@media (max-width: 768px) {
+  #cover-config-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
+
 <div id="toast"></div>
 
 <script>
@@ -855,10 +1774,22 @@ const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 const{createClient}=supabase;
 const db=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
+const DEFAULT_INTERFACE_MODE='default';
 let SESS=null,USER_ROW=null,ARTS=[],ACTIVE_CAT='all',ADMIN_AUTH=false,ATAB='pending',ADMIN_PIN='123456',COVER_FILE=null,COVER_URL=null,EDIT_ID=null,AUTH_MODE='login',ADMIN_NAME='Rishabh Gupta';
 const ADMIN_EMAIL='rgupta65495@gmail.com';
 let isFirstLogin=false,FOLLOWING=[],AVATARS={},BOOKMARKS={};
-let CROPPER=null,CROP_TYPE='';
+let CROPPER=null,CROP_TYPE='',CONFIG_CROPPER=null;
+
+const WRITING_PROMPTS = [
+  "Write about a lesson you learned the hard way this past year.",
+  "Draft a short opinion piece on how technology is shifting human connection.",
+  "Describe a place you visited that felt frozen in time.",
+  "Write a poem or prose exploring the feeling of a quiet Sunday morning.",
+  "What is a book, film, or piece of art that completely changed your worldview?",
+  "Describe your ideal world 50 years from now. What does daily life look like?",
+  "Write a guide explaining something you are uniquely good at to a beginner.",
+  "Reflect on a conversation you had that you will never forget."
+];
 
 function isAdminUser(){return SESS&&SESS.user&&SESS.user.email===ADMIN_EMAIL}
 
@@ -964,6 +1895,8 @@ async function init(){
       menu.style.left=x+'px';menu.style.top=y+'px';
     });
   }
+  const activeMode = localStorage.getItem('iw_interface_mode') || DEFAULT_INTERFACE_MODE;
+  changeInterfaceMode(activeMode);
 }
 
 /* ── DRAWER ── */
@@ -1123,6 +2056,7 @@ async function fetchArticles(){
   const sA=document.getElementById('stat-articles'),sW=document.getElementById('stat-writers');
   if(sA)animateCount(sA,ARTS.length);if(sW)animateCount(sW,uw);
   renderFeatured();renderArticles();
+  checkOnboardingBanner();
 }
 function animateCount(el,t){let c=0;const s=Math.ceil(t/20);const iv=setInterval(()=>{c=Math.min(c+s,t);el.textContent=c;if(c>=t)clearInterval(iv)},40)}
 
@@ -1326,6 +2260,34 @@ async function openArt(id){
       }catch(e){isBook=false;}
     }
 
+    const config = parseCoverConfig(art.cover_url);
+    const covClass = `art-cover pos-${config.pos} cover-shape-${config.shape}`;
+    const cov = art.cover_url ? `<img src="${art.cover_url}" class="${covClass}">` : '';
+
+    let contentLayout = '';
+    if (config.pos === 'leftcolumn' && art.cover_url) {
+      contentLayout = `
+        <div class="art-split-layout">
+          <div class="art-left-col">${cov}</div>
+          <div class="art-right-col">
+            <div class="art-body-container">
+              <div class="art-body">${isBook ? bookHtml : art.content}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      contentLayout = `
+        <div class="art-body-container">
+          ${(config.pos === 'top' || !config.pos) ? cov : ''}
+          <div class="art-body">
+            ${(config.pos === 'floatleft' || config.pos === 'floatright') ? cov : ''}
+            ${isBook ? bookHtml : art.content}
+          </div>
+        </div>
+      `;
+    }
+
     document.getElementById('view-article').innerHTML=`<div class="sec">
       <button class="back-btn" onclick="goBack()">← Back</button>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
@@ -1349,11 +2311,23 @@ async function openArt(id){
           ${viewsDisplay}
           <button class="like-btn${isL?' liked':''}" id="art-like-btn" onclick="toggleArtLike('${id}','${art.author_id}')"><span class="like-heart">♥</span> <span id="art-lc">${art.likes||0}</span> Likes</button>
           <button class="bookmark-btn${isBm?' saved':''}" onclick="toggleArtBookmark('${id}')" title="Bookmark">${isBm?'🔖 Saved':'🏷️ Save'}</button>
+          <button class="share-btn" onclick="copyArticleContent('${id}')" title="Copy article text">📋 Copy Text</button>
           <button class="share-btn" onclick="shareArt('${id}','${esc(art.title).replace(/'/g,"\\'").replace(/"/g,'\\"')}')">📤 Share</button>
         </div>
       </div>
-      ${cov}
-      <div class="art-body">${isBook?bookHtml:art.content}</div>
+      
+      <!-- Paper Style Selector -->
+      <div class="paper-selector-container">
+        <span class="paper-selector-label">🎨 Reading Texture:</span>
+        <button class="paper-btn active" onclick="changePaperStyle('default')">Default</button>
+        <button class="paper-btn" onclick="changePaperStyle('wood')">🪵 Wood</button>
+        <button class="paper-btn" onclick="changePaperStyle('paper')">📄 Paper</button>
+        <button class="paper-btn" onclick="changePaperStyle('parchment')">📜 Parchment</button>
+        <button class="paper-btn" onclick="changePaperStyle('linen')">🌾 Linen</button>
+      </div>
+
+      ${contentLayout}
+
       <div class="cmt-sec">
         <h3 style="font-family:var(--f1)">💬 Comments <span class="cmt-count-badge">${(cmts||[]).length}</span></h3>
         ${cmtIn}
@@ -1563,8 +2537,12 @@ async function startWrite(type,extDraft=null){
     const p = document.getElementById('cover-prev');
     p.src = COVER_URL;
     p.style.display = 'block';
+    const config = parseCoverConfig(COVER_URL);
+    p.className = 'cover-shape-' + config.shape;
+    document.getElementById('cover-config-controls').style.display = 'block';
   } else {
     document.getElementById('cover-prev').style.display='none';
+    document.getElementById('cover-config-controls').style.display='none';
     COVER_URL=null;
   }
   COVER_FILE=null;
@@ -1778,9 +2756,11 @@ async function uploadCover(blob){
     const p=document.getElementById('cover-prev');
     if (p) {
       p.src=publicUrl;
+      p.className = 'cover-shape-rounded';
       p.style.display='block';
       p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
+    document.getElementById('cover-config-controls').style.display = 'block';
     toast('Cover image uploaded successfully! 📷');
   }catch(e){
     toast('Cover upload failed: '+e.message);
@@ -2135,6 +3115,250 @@ function setTheme(t){
 async function openSupport(){
   document.getElementById('support-modal').classList.remove('h');
   try{const res=await db.from('settings').select('value').eq('key','support_qr').single();if(res.data&&res.data.value){document.getElementById('sup-qr-img').src=res.data.value;document.getElementById('sup-qr-img').style.display='block';document.getElementById('sup-qr-ph').style.display='none'}}catch(e){}
+}
+
+/* ── NEW FUNCTIONS & FEATURES ── */
+function changePaperStyle(styleName) {
+  const container = document.querySelector('.art-body-container');
+  if (!container) return;
+  container.classList.remove('paper-wood', 'paper-paper', 'paper-parchment', 'paper-linen');
+  if (styleName !== 'default') {
+    container.classList.add('paper-' + styleName);
+  }
+  document.querySelectorAll('.paper-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${styleName}'`));
+  });
+}
+
+function copyArticleContent(id) {
+  const art = ARTS.find(a => a.id === id);
+  if (!art) return;
+  const temp = document.createElement('div');
+  temp.innerHTML = art.content.startsWith('<!--BOOK_DATA_v1-->') ? "Book content" : art.content;
+  
+  let text = temp.innerText || temp.textContent;
+  if (art.content.startsWith('<!--BOOK_DATA_v1-->') && CURRENT_BOOK_CHAPS) {
+    text = CURRENT_BOOK_CHAPS.map(c => {
+      const tDiv = document.createElement('div');
+      tDiv.innerHTML = c.html;
+      return `=== ${c.title} ===\n\n${tDiv.innerText || tDiv.textContent}`;
+    }).join('\n\n');
+  }
+
+  navigator.clipboard.writeText(text).then(() => {
+    toast('Article text copied to clipboard! 📋');
+  }).catch(() => {
+    toast('Failed to copy. Please select and copy manually.');
+  });
+}
+
+function parseCoverConfig(urlStr) {
+  const config = { shape: 'rounded', pos: 'top' };
+  if (!urlStr) return config;
+  try {
+    const hash = urlStr.split('#')[1];
+    if (hash) {
+      const params = new URLSearchParams(hash);
+      if (params.has('shape')) config.shape = params.get('shape');
+      if (params.has('pos')) config.pos = params.get('pos');
+    }
+  } catch (e) {}
+  return config;
+}
+
+function openCoverConfigModal() {
+  if (!COVER_URL) return;
+  const img = document.getElementById('crop-target-img');
+  img.src = COVER_URL.split('#')[0];
+  
+  const config = parseCoverConfig(COVER_URL);
+  document.getElementById('cover-opt-pos').value = config.pos;
+  document.getElementById('cover-opt-shape').value = config.shape;
+  
+  if (CONFIG_CROPPER) {
+    CONFIG_CROPPER.destroy();
+    CONFIG_CROPPER = null;
+  }
+  document.getElementById('cover-config-modal').classList.remove('h');
+}
+
+function triggerRecrop() {
+  const img = document.getElementById('crop-target-img');
+  if (CONFIG_CROPPER) return;
+  
+  CONFIG_CROPPER = new Cropper(img, {
+    aspectRatio: 16 / 9,
+    viewMode: 1,
+    responsive: true,
+    guides: true,
+    center: true,
+    highlight: false,
+    cropBoxMovable: true,
+    cropBoxResizable: true
+  });
+  toast('Crop box active! Adjust corners and click Apply Settings. ✂️');
+}
+
+async function saveCoverConfig() {
+  const pos = document.getElementById('cover-opt-pos').value;
+  const shape = document.getElementById('cover-opt-shape').value;
+  
+  if (CONFIG_CROPPER) {
+    toast('Cropping and uploading image…');
+    CONFIG_CROPPER.getCroppedCanvas({ maxWidth: 1600 }).toBlob(async blob => {
+      try {
+        const path = `covers/crop_${Date.now()}.jpg`;
+        let publicUrl;
+        try {
+          const { error: sErr } = await db.storage.from('covers').upload(path, blob);
+          if (sErr) throw sErr;
+          const { data: { publicUrl: pUrl } } = db.storage.from('covers').getPublicUrl(path);
+          publicUrl = pUrl;
+        } catch (err) {
+          console.warn("Storage crop upload failed, falling back to Base64", err);
+          publicUrl = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        }
+        
+        COVER_URL = `${publicUrl}#shape=${shape}&pos=${pos}`;
+        const p = document.getElementById('cover-prev');
+        if (p) {
+          p.src = COVER_URL;
+          p.className = 'cover-shape-' + shape;
+        }
+        toast('Cover cropped and configured! 📷');
+        CONFIG_CROPPER.destroy();
+        CONFIG_CROPPER = null;
+        closeModal('cover-config-modal');
+      } catch (e) {
+        toast('Failed to save cropped image: ' + e.message);
+      }
+    }, 'image/jpeg', 0.85);
+  } else {
+    const baseUrl = COVER_URL.split('#')[0];
+    COVER_URL = `${baseUrl}#shape=${shape}&pos=${pos}`;
+    const p = document.getElementById('cover-prev');
+    if (p) {
+      p.src = COVER_URL;
+      p.className = 'cover-shape-' + shape;
+    }
+    toast('Layout settings updated! 📷');
+    closeModal('cover-config-modal');
+  }
+}
+
+function changeInterfaceMode(mode) {
+  const sNav = document.getElementById('interface-mode-select');
+  const sDrawer = document.getElementById('interface-mode-select-drawer');
+  const selectors = document.querySelectorAll('.mode-selector-nav');
+  
+  if (sNav) sNav.value = mode;
+  if (sDrawer) sDrawer.value = mode;
+  selectors.forEach(sel => sel.value = mode);
+  
+  document.body.className = '';
+  document.body.classList.add('mode-' + mode);
+  
+  localStorage.setItem('iw_interface_mode', mode);
+  
+  if (mode === 'modern') {
+    let noise = document.querySelector('.noise');
+    if (!noise) {
+      noise = document.createElement('div');
+      noise.className = 'noise';
+      document.body.appendChild(noise);
+    }
+    let glow = document.querySelector('.ambient-glow');
+    if (!glow) {
+      glow = document.createElement('div');
+      glow.className = 'ambient-glow';
+      document.body.appendChild(glow);
+    }
+    showBottomDock(true);
+  } else {
+    showBottomDock(false);
+  }
+  
+  renderArticles();
+  renderFeatured();
+}
+
+function showBottomDock(show) {
+  const dock = document.getElementById('aura-dock');
+  if (dock) {
+    dock.style.display = show ? 'flex' : 'none';
+  }
+}
+
+function checkOnboardingBanner() {
+  const featured = document.getElementById('featured-wrap');
+  if (!featured) return;
+  
+  let userArticlesCount = 0;
+  if (SESS && USER_ROW) {
+    userArticlesCount = ARTS.filter(a => a.author_id === USER_ROW.id).length;
+  }
+  
+  if (userArticlesCount > 0) {
+    const ob = document.getElementById('onboarding-inspiration');
+    if (ob) ob.remove();
+    return;
+  }
+  
+  if (!document.getElementById('onboarding-inspiration')) {
+    const banner = document.createElement('div');
+    banner.id = 'onboarding-inspiration';
+    banner.className = 'onboarding-card';
+    banner.innerHTML = `
+      <div class="onboarding-content">
+        <div class="onboarding-sparkle">✨ Share Your Voice</div>
+        <h3>Welcome to Inkwell, Writer!</h3>
+        <p>The world is waiting for your thoughts, essays, poems, or stories. Share your unique perspective today and inspire others.</p>
+        <div class="onboarding-actions">
+          <button class="nb nb-a" onclick="goWrite()" style="display:flex;align-items:center;gap:6px">✍️ Write Your First Article</button>
+          <button class="nb nb-ghost" onclick="showWritingPrompt()">💡 Need Inspiration?</button>
+        </div>
+        <div id="prompt-display" class="prompt-box" style="display:none">
+          <span id="prompt-text" class="prompt-text"></span>
+          <button class="prompt-next" onclick="rotatePrompt()">Next Prompt ➔</button>
+        </div>
+      </div>
+    `;
+    
+    const sec = document.querySelector('.sec');
+    if (sec) {
+      const header = sec.querySelector('.sec-header');
+      if (header) {
+        sec.insertBefore(banner, header);
+      } else {
+        sec.insertBefore(banner, sec.firstChild);
+      }
+    }
+  }
+}
+
+function showWritingPrompt() {
+  const display = document.getElementById('prompt-display');
+  if (display) {
+    if (display.style.display === 'none') {
+      display.style.display = 'flex';
+      rotatePrompt();
+    } else {
+      display.style.display = 'none';
+    }
+  }
+}
+
+function rotatePrompt() {
+  const textEl = document.getElementById('prompt-text');
+  if (textEl) {
+    const randomPrompt = WRITING_PROMPTS[Math.floor(Math.random() * WRITING_PROMPTS.length)];
+    textEl.textContent = `"${randomPrompt}"`;
+  }
 }
 
 /* ── UTILS ── */
